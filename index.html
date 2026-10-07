@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SOAN KPI Dashboard - August 2026</title>
+<style>
+  :root {
+    color-scheme: light;
+    --brand-green: #88bd49;
+    --brand-purple: #53316a;
+    --brand-purple-deep: #3a2149;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #ffffff;
+    --page-plane:     #f4f3f0;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border-ring:    rgba(11,11,11,0.08);
+    --success-text:   #006300;
+    --shadow-1: 0 1px 2px rgba(20,10,30,0.04), 0 2px 8px rgba(20,10,30,0.05);
+    --shadow-2: 0 4px 10px rgba(20,10,30,0.07), 0 12px 28px rgba(20,10,30,0.09);
+
+    --series-1: #2a78d6; /* Melissa */
+    --series-2: #eb6834; /* Liz */
+    --series-3: #1baf7a; /* Becca */
+    --series-4: #eda100; /* Vikas */
+    --series-5: #e87ba4; /* Michelle */
+    --series-6: #008300; /* S+S */
+    --series-7: #4a3aa7; /* Simplified Team */
+    --series-8: #0e8f99; /* Shilpa */
+
+    --seq-100: #cde2fb; --seq-200: #9ec5f4; --seq-300: #6da7ec;
+    --seq-400: #3987e5; --seq-500: #256abf; --seq-600: #184f95; --seq-700: #0d366b;
+
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --surface-2:      #212120;
+    --page-plane:     #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border-ring:    rgba(255,255,255,0.09);
+    --success-text:   #0ca30c;
+    --shadow-1: 0 1px 2px rgba(0,0,0,0.3), 0 2px 10px rgba(0,0,0,0.35);
+    --shadow-2: 0 6px 16px rgba(0,0,0,0.4), 0 16px 32px rgba(0,0,0,0.45);
+
+    --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
+    --series-4: #c98500; --series-5: #d55181; --series-6: #008300; --series-7: #9085e9; --series-8: #2bb3bd;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--page-plane);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 24px 20px 64px; }
+
+  header.top {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--brand-purple) 0%, var(--brand-purple-deep) 100%);
+    color: #fff;
+    padding: 26px 26px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-2);
+  }
+  header.top::before {
+    content: ''; position: absolute; right: -60px; top: -80px; width: 220px; height: 220px;
+    border-radius: 50%; background: radial-gradient(circle, rgba(136,189,73,0.28), transparent 70%);
+  }
+  header.top::after {
+    content: ''; position: absolute; right: 90px; bottom: -100px; width: 160px; height: 160px;
+    border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+  }
+  header.top .htext { position: relative; z-index: 1; }
+  header.top h1 { font-size: 21px; margin: 0 0 4px; font-weight: 700; letter-spacing: -0.01em; }
+  header.top p { margin: 0; font-size: 13px; color: #e5dcee; }
+  .accent-bar { height: 4px; background: linear-gradient(90deg, var(--brand-green), #b6d98c); border-radius: 0 0 10px 10px; margin-bottom: 22px; }
+
+  .theme-toggle {
+    position: relative; z-index: 1;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    border-radius: 7px;
+    padding: 7px 13px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .theme-toggle:hover { background: rgba(255,255,255,0.24); }
+
+  .month-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0 0;
+  }
+  .month-tab {
+    background: var(--surface-1);
+    border: 1px solid var(--border-ring);
+    color: var(--text-secondary);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .month-tab:hover { border-color: var(--brand-green); color: var(--text-primary); }
+  .month-tab.active {
+    background: var(--brand-green);
+    border-color: var(--brand-green);
+    color: #fff;
+  }
+
+  .view-tabs { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 0; align-items:center; }
+  .view-tabs .vlabel { font-size:12px; color:var(--text-muted); margin-right:4px; }
+  .view-tab {
+    background: var(--surface-1); border: 1px solid var(--border-ring); color: var(--text-secondary);
+    border-radius: 20px; padding: 5px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .view-tab .vdot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .view-tab:hover { border-color: var(--brand-purple); color: var(--text-primary); }
+  .view-tab.active { background: var(--brand-purple); border-color: var(--brand-purple); color:#fff; }
+  :root[data-theme="dark"] .view-tab.active { background:#7a4f98; border-color:#7a4f98; }
+  .view-tab.disabled { opacity:.4; cursor:not-allowed; }
+  .lcam-hero { display:flex; align-items:center; gap:12px; margin:26px 0 6px; }
+  .lcam-hero .bigdot { width:16px; height:16px; border-radius:50%; }
+  .lcam-hero h2 { margin:0; font-size:20px; }
+  .lcam-hero p { margin:0; font-size:12.5px; color:var(--text-muted); }
+  .cmp-good { color: var(--success-text); font-weight:650; }
+  .cmp-bad { color: #b4532a; font-weight:650; }
+  :root[data-theme="dark"] .cmp-bad { color: #f08a5d; }
+  .stackbar { display:flex; height:30px; border-radius:6px; overflow:hidden; margin:12px 0 8px; background: var(--gridline); }
+  .stackbar div { height:100%; }
+  .info-banner {
+    background: var(--surface-1);
+    border: 1px solid var(--border-ring);
+    border-left: 4px solid var(--brand-green);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    margin-bottom: 26px;
+    box-shadow: var(--shadow-1);
+  }
+  .info-banner strong { color: var(--text-primary); }
+
+  h2.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 34px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--brand-green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  h2.section-title .titlewrap { display:flex; align-items:center; gap:9px; }
+  .icon-chip {
+    width: 26px; height: 26px; border-radius: 7px; display:flex; align-items:center; justify-content:center;
+    background: rgba(83,49,106,0.10); color: var(--brand-purple); flex: none;
+  }
+  :root[data-theme="dark"] .icon-chip { background: rgba(136,189,73,0.15); color: var(--brand-green); }
+  .icon-chip svg { width: 15px; height: 15px; }
+  h2.section-title span.sub { font-size: 12px; font-weight: 400; color: var(--text-muted); }
+
+  /* ---- stat tiles ---- */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .tile {
+    background: var(--surface-1);
+    border: 1px solid var(--border-ring);
+    border-radius: 12px;
+    padding: 17px 19px;
+    box-shadow: var(--shadow-1);
+  }
+  .tile .label { font-size: 12.5px; color: var(--text-secondary); margin-bottom: 7px; }
+  .tile .value { font-size: 27px; font-weight: 650; color: var(--text-primary); line-height: 1.15; letter-spacing: -0.01em; }
+  .tile .delta { font-size: 12.5px; margin-top: 5px; }
+  .tile .delta.good { color: var(--success-text); }
+  .tile .delta.muted { color: var(--text-muted); }
+  .tile .delta.warn { color: #8a5a00; }
+  :root[data-theme="dark"] .tile .delta.warn { color: var(--status-warning); }
+  .tile .meter-track {
+    margin-top: 10px; height: 8px; border-radius: 4px; background: var(--seq-100);
+    position: relative; overflow: hidden;
+  }
+  :root[data-theme="dark"] .tile .meter-track { background: #24344a; }
+  .tile .meter-fill { height: 100%; background: var(--seq-500); border-radius: 4px; }
+  .tile .meter-marks { position: relative; height: 14px; font-size: 10.5px; color: var(--text-muted); }
+  .tile .meter-marks span { position: absolute; transform: translateX(-50%); }
+
+  /* ---- silo overview cards ---- */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .silo-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border-ring);
+    border-radius: 12px;
+    padding: 16px 16px 14px;
+    box-shadow: var(--shadow-1);
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    position: relative;
+  }
+  .silo-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
+  .silo-card:focus-visible { outline: 2px solid var(--brand-green); outline-offset: 2px; }
+  .silo-card .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 7px; }
+  .silo-card .name { font-size: 13.5px; font-weight: 700; display:flex; align-items:center; }
+  .silo-card .role { font-size: 11px; color: var(--text-muted); margin: 2px 0 10px 16px; }
+  .silo-card .gauge-row { display: flex; align-items: center; gap: 12px; }
+  .silo-card .rev { font-size: 12.5px; color: var(--text-secondary); margin-top: 10px; }
+  .silo-card .rev b { color: var(--text-primary); font-weight: 650; }
+  .silo-card .click-hint { position: absolute; top: 14px; right: 14px; font-size: 10px; color: var(--text-muted); opacity: .65; }
+
+  /* ---- chart card ---- */
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border-ring);
+    border-radius: 12px;
+    padding: 19px 21px 15px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-1);
+  }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;}
+  .card-head h3 { font-size: 14px; margin: 0; font-weight: 700; }
+  .card-head p.note { font-size: 12px; color: var(--text-muted); margin: 2px 0 0; }
+  .table-toggle {
+    font-size: 12px; color: var(--text-secondary); background: transparent;
+    border: 1px solid var(--border-ring); border-radius: 6px; padding: 4px 10px; cursor: pointer;
+  }
+  .table-toggle:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0 4px; font-size: 12.5px; color: var(--text-secondary); }
+  .legend .key { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  svg text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .axis-label { fill: var(--text-muted); font-size: 11px; }
+  .grid-line { stroke: var(--gridline); stroke-width: 1; }
+  .baseline-line { stroke: var(--baseline); stroke-width: 1; }
+  .bar-label { fill: var(--text-secondary); font-size: 11px; }
+  .cat-label { fill: var(--text-primary); font-size: 12px; }
+  .click-affordance { fill: var(--text-muted); font-size: 10px; }
+
+  .bar-rect { cursor: pointer; }
+  .bar-rect:hover { filter: brightness(1.08); }
+  .target-tick { stroke: var(--text-primary); stroke-width: 2; }
+
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 60;
+    background: var(--text-primary); color: var(--surface-1);
+    font-size: 12px; padding: 7px 10px; border-radius: 6px;
+    line-height: 1.5; box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+    opacity: 0; transition: opacity .08s ease;
+    max-width: 240px;
+  }
+  :root[data-theme="dark"] .tooltip { background: #fff; color: #0b0b0b; }
+  .tooltip.show { opacity: 1; }
+  .tooltip .t-value { font-weight: 700; }
+  .tooltip .t-row { display:flex; justify-content: space-between; gap: 10px; }
+
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.data-table th, table.data-table td {
+    text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--gridline);
+  }
+  table.data-table th { color: var(--text-secondary); font-weight: 600; font-size: 12px; }
+  table.data-table td.num, table.data-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data-table tr:last-child td { border-bottom: none; }
+
+  .hidden { display: none !important; }
+
+  .mini-meter { display: flex; align-items: center; gap: 8px; }
+  .mini-meter .track { flex: 1; height: 6px; border-radius: 3px; background: var(--seq-100); position: relative; min-width: 60px; }
+  :root[data-theme="dark"] .mini-meter .track { background: #24344a; }
+  .mini-meter .fill { height: 100%; border-radius: 3px; }
+  .pill { font-size: 11px; padding: 2px 7px; border-radius: 10px; display: inline-block; }
+  .pill.warn { background: rgba(250,178,25,0.18); color: #8a5a00; }
+  :root[data-theme="dark"] .pill.warn { color: #fab219; }
+  .pill.pending { background: rgba(137,135,129,0.18); color: var(--text-muted); }
+  table.data-table tbody tr.clickable-row { cursor: pointer; }
+  table.data-table tbody tr.clickable-row:hover { background: rgba(83,49,106,0.05); }
+  :root[data-theme="dark"] table.data-table tbody tr.clickable-row:hover { background: rgba(136,189,73,0.07); }
+
+  /* ---- drill-down panel ---- */
+  .backdrop {
+    position: fixed; inset: 0; background: rgba(10,8,14,0.42); z-index: 70;
+    opacity: 0; pointer-events: none; transition: opacity .18s ease;
+  }
+  .backdrop.open { opacity: 1; pointer-events: auto; }
+  .panel {
+    position: fixed; top: 0; right: 0; height: 100%; width: min(460px, 92vw);
+    background: var(--surface-2); z-index: 71; box-shadow: var(--shadow-2);
+    transform: translateX(100%); transition: transform .22s ease;
+    display: flex; flex-direction: column;
+  }
+  .panel.open { transform: translateX(0); }
+  .panel-head {
+    padding: 20px 22px 16px; border-bottom: 1px solid var(--border-ring);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  }
+  .panel-head .dot { width: 11px; height: 11px; border-radius: 50%; display:inline-block; margin-right: 8px; }
+  .panel-head h3 { margin: 0 0 3px; font-size: 17px; display:flex; align-items:center; }
+  .panel-head p { margin: 0; font-size: 12.5px; color: var(--text-muted); }
+  .panel-close {
+    background: transparent; border: 1px solid var(--border-ring); border-radius: 7px;
+    width: 30px; height: 30px; cursor: pointer; color: var(--text-secondary); flex: none;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .panel-close:hover { color: var(--text-primary); border-color: var(--text-muted); }
+  .panel-body { padding: 18px 22px 30px; overflow-y: auto; flex: 1; }
+  .panel-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+  .panel-stats .pstat { background: var(--surface-1); border: 1px solid var(--border-ring); border-radius: 8px; padding: 10px 11px; }
+  .panel-stats .pstat .l { font-size: 10.5px; color: var(--text-muted); margin-bottom: 3px; }
+  .panel-stats .pstat .v { font-size: 15px; font-weight: 650; }
+  .panel-section-title { font-size: 12.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .03em; margin: 18px 0 8px; }
+  .panel-body table.data-table { font-size: 12.5px; }
+  .panel-body table.data-table th, .panel-body table.data-table td { padding: 6px 6px; }
+
+  footer { margin-top: 30px; font-size: 12px; color: var(--text-muted); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="htext">
+      <h1 id="dashTitle">SOAN Monthly KPI Dashboard - August 2026</h1>
+      <p>Revenue, cost, margin, and staffing across all <span id="siloCount">8</span> silos</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button">Dark mode</button>
+  </header>
+  <div class="month-tabs" id="monthTabs"></div>
+  <div class="view-tabs" id="viewTabs"></div>
+  <div class="accent-bar"></div>
+
+  <div class="info-banner" id="infoBanner">
+    <strong>Final August numbers.</strong> Revenue, cost, margin, capacity,
+    and Software &amp; Other Monthly Costs are all real for every silo, and
+    Total Company Revenue is pulled independently from the whole company
+    QuickBooks P&amp;L. Click any silo, a card, a bar, a row, to see who's
+    in it.
+  </div>
+
+  <div id="soanView">
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-grid"></span>Silo overview</span>
+    <span class="sub">Click a card for the team &amp; client list</span>
+  </h2>
+  <div class="overview-grid" id="overviewGrid"></div>
+
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-cost"></span>Cost, margin &amp; unclaimed income</span>
+    <span class="sub">From <span class="mname">August</span> payroll and the whole company P&amp;L</span>
+  </h2>
+  <div class="kpi-row" id="costRow"></div>
+
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-kpi"></span>Company-wide</span>
+    <span class="sub">All silos combined</span>
+  </h2>
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-rev"></span>Revenue by silo</span>
+    <span class="sub">Actual <span class="mname">August</span> P&amp;L vs. expected (billed rate)</span>
+  </h2>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <h3>Actual vs. expected monthly revenue</h3>
+        <p class="note">Bar = actual P&amp;L revenue &middot; tick = expected &middot; click a bar for that silo's team &amp; clients &middot; sorted high to low</p>
+      </div>
+      <button class="table-toggle" data-target="revenueChart">View as table</button>
+    </div>
+    <div id="revenueChart"></div>
+  </div>
+
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-hrs"></span>Billable hours by silo</span>
+    <span class="sub">Actual hours vs. expected (capacity &times; % allocated)</span>
+  </h2>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <h3>Actual vs. expected billable hours</h3>
+        <p class="note">Bar = actual hours logged in <span class="mname">August</span> &middot; tick = expected hours</p>
+      </div>
+      <button class="table-toggle" data-target="hoursChart">View as table</button>
+    </div>
+    <div id="hoursChart"></div>
+  </div>
+
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-tier"></span>Client tier mix</span>
+    <span class="sub">Hurricane Level, by silo</span>
+  </h2>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <h3>Revenue by tier, per silo</h3>
+        <p class="note">Cat 5 = highest tier. S+S and Simplified Team clients aren't tiered, so they're not in this view.</p>
+      </div>
+      <button class="table-toggle" data-target="tierChart">View as table</button>
+    </div>
+    <div id="tierChart"></div>
+  </div>
+
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-staff"></span>Staffing &amp; utilization</span>
+    <span class="sub">Real <span class="mname">August</span> hours, by person</span>
+  </h2>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <h3>Billable hours vs. monthly capacity</h3>
+        <p class="note">Sorted by utilization, highest first &middot; click a person to see their silo split &middot; "no capacity set" means Roster &amp; Allocation still needs that person's hours filled in</p>
+      </div>
+    </div>
+    <div id="staffingTable"></div>
+  </div>
+
+  <h2 class="section-title">
+    <span class="titlewrap"><span class="icon-chip" id="icon-kpi"></span>Trends over time</span>
+    <span class="sub">Every finalized month, side by side</span>
+  </h2>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <h3>Company-wide, by month</h3>
+        <p class="note">Total Company Revenue is the independent QuickBooks pull, the rest combines all silos.</p>
+      </div>
+    </div>
+    <div id="trendsCompanyTable"></div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <h3>Actual revenue by silo, by month</h3>
+      </div>
+    </div>
+    <div id="trendsRevenueTable"></div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <h3>Actual billable hours by silo, by month</h3>
+      </div>
+    </div>
+    <div id="trendsHoursTable"></div>
+  </div>
+
+  </div>
+  <div id="lcamView" class="hidden"></div>
+
+  <footer id="dashFooter">Built from the SOAN KPI Tracker workbook, August 2026</footer>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+<div class="backdrop" id="backdrop"></div>
+<aside class="panel" id="panel">
+  <div class="panel-head">
+    <div>
+      <h3 id="panelTitle"></h3>
+      <p id="panelSub"></p>
+    </div>
+    <button class="panel-close" id="panelClose" aria-label="Close">&#10005;</button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</aside>
+
+<script>
+const MONTHS = {"July 2026": {"month": "July 2026", "silos": [{"name": "Melissa", "role": "LCAM", "exp_hrs": 844.44, "act_hrs": 819.9, "exp_rev": 39199.13, "act_rev": 29635.85, "tiers": [3500, 10266.13, 14604, 1705, 6894], "cost": 16581.36, "margin_expected": 57.7, "margin_actual": 44.0}, {"name": "Liz", "role": "LCAM", "exp_hrs": 323, "act_hrs": 369.1, "exp_rev": 24038.6, "act_rev": 20853.6, "tiers": [6650, 9628, 3051, 3389.6, 1320], "cost": 7338.84, "margin_expected": 69.5, "margin_actual": 64.8}, {"name": "Becca", "role": "LCAM", "exp_hrs": 436.5, "act_hrs": 422.0, "exp_rev": 35384.08, "act_rev": 32416.75, "tiers": [24754, 3305, 4160, 1295, 1870.08], "cost": 12894.39, "margin_expected": 63.6, "margin_actual": 60.2}, {"name": "Vikas", "role": "LCAM", "exp_hrs": 185.1, "act_hrs": 194.8, "exp_rev": 10652.5, "act_rev": 10652.5, "tiers": [6712.5, 375, 1550, 1805, 210], "cost": 1452.04, "margin_expected": 86.4, "margin_actual": 86.4}, {"name": "Michelle", "role": "LCAM", "exp_hrs": 175, "act_hrs": 44.9, "exp_rev": 16798, "act_rev": 9600, "tiers": [15190, 0, 1608, 0, 0], "cost": 10375.0, "margin_expected": 38.2, "margin_actual": -8.1}, {"name": "S+S", "role": "Team", "exp_hrs": 0, "act_hrs": 0, "exp_rev": 7600, "act_rev": 8350, "tiers": [0, 0, 0, 0, 0], "cost": 0, "margin_expected": 100.0, "margin_actual": 100.0}, {"name": "Simplified Team", "role": "Team", "exp_hrs": 0, "act_hrs": 0, "exp_rev": 800, "act_rev": 0, "tiers": [0, 0, 0, 0, 0], "cost": 16.84, "margin_expected": 97.9, "margin_actual": null}], "employees": [{"name": "Melissa", "silos": ["Melissa"], "capacity": 53, "actual": 77.8, "pct": {"Melissa": 100}}, {"name": "Vikas", "silos": ["Becca", "Melissa", "Vikas"], "capacity": 135, "actual": 131.3, "pct": {"Melissa": 1.8, "Becca": 62.5, "Vikas": 35.7}}, {"name": "Shilpa", "silos": ["Becca", "Melissa"], "capacity": 135, "actual": 74.0, "pct": {"Melissa": 58.6, "Becca": 41.4}}, {"name": "Mandy", "silos": ["Becca", "Melissa"], "capacity": 60, "actual": 92.8, "pct": {"Melissa": 38.3, "Becca": 61.7}}, {"name": "Daljit", "silos": ["Melissa"], "capacity": 135, "actual": 148.9, "pct": {"Melissa": 100}}, {"name": "Bhavika", "silos": ["Melissa"], "capacity": 67, "actual": 134.7, "pct": {"Melissa": 100}}, {"name": "Bhanu", "silos": ["Melissa"], "capacity": 135, "actual": 74.8, "pct": {"Melissa": 100}}, {"name": "Jobin", "silos": ["Melissa"], "capacity": 135, "actual": 143.2, "pct": {"Melissa": 100}}, {"name": "Parita", "silos": ["Melissa"], "capacity": 135, "actual": 54.5, "pct": {"Melissa": 100}}, {"name": "Myank", "silos": ["Melissa"], "capacity": 80, "actual": 104.7, "pct": {"Melissa": 100}}, {"name": "Liz", "silos": ["Liz"], "capacity": 53, "actual": 74.0, "pct": {"Liz": 100}}, {"name": "Vikrant", "silos": ["Liz"], "capacity": 135, "actual": 175.4, "pct": {"Liz": 100}}, {"name": "Satwinder", "silos": ["Liz"], "capacity": 135, "actual": 119.8, "pct": {"Liz": 100}}, {"name": "Becca", "silos": ["Becca"], "capacity": 53, "actual": 51.8, "pct": {"Becca": 100}}, {"name": "Zee", "silos": ["Becca"], "capacity": 73, "actual": 54.4, "pct": {"Becca": 100}}, {"name": "Shivanshi", "silos": ["Becca", "Vikas"], "capacity": 135, "actual": 148.0, "pct": {"Becca": 91.2, "Vikas": 8.8}}, {"name": "Deepak", "silos": ["Becca", "Vikas"], "capacity": 135, "actual": 145.7, "pct": {"Becca": 7.4, "Vikas": 92.6}}, {"name": "Michelle", "silos": ["Michelle"], "capacity": 40, "actual": 44.9, "pct": {"Michelle": 100}}, {"name": "Parth", "silos": ["Michelle"], "capacity": 135, "actual": 0.0, "pct": {"Michelle": 100}}, {"name": "Andrea", "silos": ["Becca"], "capacity": null, "actual": null, "pct": {"Becca": 100}}], "silo_team": {"Melissa": [{"name": "Melissa", "pct": 100, "capacity": 53, "actual": 77.84}, {"name": "Vikas", "pct": 1.8, "capacity": 135, "actual": 2.30601745360046}, {"name": "Shilpa", "pct": 58.6, "capacity": 135, "actual": 43.3162262204166}, {"name": "Mandy", "pct": 38.3, "capacity": 60, "actual": 35.566111910932}, {"name": "Daljit", "pct": 100, "capacity": 135, "actual": 148.89}, {"name": "Bhavika", "pct": 100, "capacity": 67, "actual": 134.73}, {"name": "Bhanu", "pct": 100, "capacity": 135, "actual": 74.84}, {"name": "Jobin", "pct": 100, "capacity": 135, "actual": 143.23}, {"name": "Parita", "pct": 100, "capacity": 135, "actual": 54.45}, {"name": "Myank", "pct": 100, "capacity": 80, "actual": 104.7}], "Liz": [{"name": "Liz", "pct": 100, "capacity": 53, "actual": 73.95}, {"name": "Vikrant", "pct": 100, "capacity": 135, "actual": 175.38}, {"name": "Satwinder", "pct": 100, "capacity": 135, "actual": 119.76}], "Becca": [{"name": "Becca", "pct": 100, "capacity": 53, "actual": 51.83}, {"name": "Vikas", "pct": 62.5, "capacity": 135, "actual": 82.1357296623413}, {"name": "Shilpa", "pct": 41.4, "capacity": 135, "actual": 30.6437737795834}, {"name": "Zee", "pct": 100, "capacity": 73, "actual": 54.42}, {"name": "Shivanshi", "pct": 91.2, "capacity": 135, "actual": 135.004003259098}, {"name": "Deepak", "pct": 7.4, "capacity": 135, "actual": 10.7906689706245}, {"name": "Mandy", "pct": 61.7, "capacity": 60, "actual": 57.2138880890681}, {"name": "Andrea", "pct": 100, "capacity": null, "actual": null}], "Vikas": [{"name": "Vikas", "pct": 35.7, "capacity": 135, "actual": 46.8882528840582}, {"name": "Shivanshi", "pct": 8.8, "capacity": 135, "actual": 13.0259967409017}, {"name": "Deepak", "pct": 92.6, "capacity": 135, "actual": 134.919331029375}], "Michelle": [{"name": "Michelle", "pct": 100, "capacity": 40, "actual": 44.92}, {"name": "Parth", "pct": 100, "capacity": 135, "actual": null}], "S+S": [{"name": "S+S Team", "pct": 90.5, "capacity": 0, "actual": null}], "Simplified Team": [{"name": "S+S Team", "pct": 9.5, "capacity": 0, "actual": null}]}, "silo_clients": {"Melissa": [{"client": "Global Fueling Systems", "cam": "Bhavika", "clerk": "Myank", "rate": 4800}, {"client": "Kadara (same owners as MediZap)", "cam": "Jobin", "clerk": "Parita", "rate": 4250}, {"client": "Kevin Anderson & Associates", "cam": "Mandy", "clerk": "Daljit", "rate": 3895}, {"client": "AEG (Alderac)", "cam": "Melissa", "clerk": "Bhavika", "rate": 3500}, {"client": "Platinum Millworks", "cam": "Jobin", "clerk": "Bhavika", "rate": 3000}, {"client": "MediZap (same owners as Kadara)", "cam": "Jobin", "clerk": "Parita", "rate": 2705}, {"client": "Martson Construction", "cam": "Shilpa", "clerk": "Daljit", "rate": 1613}, {"client": "T&R Business solutions dba APC Premium Services", "cam": "", "clerk": "", "rate": 1450}, {"client": "Accurate Roof SystemsTexas", "cam": "Melissa", "clerk": "", "rate": 1378.13}, {"client": "Reclaimed by Demant, LLC", "cam": "Shilpa", "clerk": "Daljit", "rate": 1250}, {"client": "Mainstay Data Services", "cam": "Shilpa", "clerk": "Bhanu", "rate": 1100}, {"client": "Duke's Liquor Box", "cam": "Shilpa", "clerk": "Daljit", "rate": 850}, {"client": "Boardwalk and Basil", "cam": "Shilpa", "clerk": "Daljit", "rate": 750}, {"client": "Carroll Hall & Industrious", "cam": "Shilpa", "clerk": "Bhanu", "rate": 750}, {"client": "Mac Design Studio", "cam": "Shilpa", "clerk": "Daljit", "rate": 680}, {"client": "Beam Center", "cam": "Melissa", "clerk": "Melissa", "rate": 650}, {"client": "Revolution Remix", "cam": "Shilpa", "clerk": "Daljit", "rate": 650}, {"client": "Wellspring Women's Center", "cam": "Melissa", "clerk": "Melissa", "rate": 650}, {"client": "Curious Communications", "cam": "Daljit", "clerk": "Daljit", "rate": 600}, {"client": "DA Property Management Services, Inc", "cam": "", "clerk": "", "rate": 550}, {"client": "RAVA Films LLC", "cam": "Daljit", "clerk": "Daljit", "rate": 500}, {"client": "The Sound Coop", "cam": "Vikas", "clerk": "Vikas", "rate": 500}, {"client": "Trees New York", "cam": "Shilpa", "clerk": "Bhanu", "rate": 500}, {"client": "Accurate Roof Systems - Oklahoma", "cam": "Melissa", "clerk": "", "rate": 450}, {"client": "Futurepoem", "cam": "Shilpa", "clerk": "Bhanu", "rate": 400}, {"client": "Nevada Assisted Living", "cam": "Jobin", "clerk": "", "rate": 390}, {"client": "Nevada Extended Living", "cam": "Jobin", "clerk": "", "rate": 390}, {"client": "Lambert & Sons Floor Covering", "cam": "Melissa", "clerk": "", "rate": 360}, {"client": "Christopher Duggan Photography", "cam": "Shilpa", "clerk": "Bhanu", "rate": 344}, {"client": "Species by the Thousands", "cam": "Shilpa", "clerk": "Daljit", "rate": 195}, {"client": "Kevin Anderson PERSONAL", "cam": "Mandy", "clerk": "", "rate": 99}, {"client": "EO Sacramento", "cam": "Shilpa", "clerk": "Daljit", "rate": 0}], "Liz": [{"client": "Sticker Farmer Sacramento LLC", "cam": "Vikrant", "clerk": "Vikrant", "rate": 2990}, {"client": "Thinkstream", "cam": "Vikrant", "clerk": "Vikrant", "rate": 2500}, {"client": "North Star Consulting", "cam": "Satwinder", "clerk": "Satwinder", "rate": 2060}, {"client": "Little Flowers Montessori", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1850}, {"client": "Jimmie Jack Fishing, Inc.", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1600}, {"client": "CDLJA, LLC", "cam": "Satwinder", "clerk": "Satwinder", "rate": 1400}, {"client": "Nautilus Sailing", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1225}, {"client": "Banker Creative", "cam": "Satwinder", "clerk": "Satwinder", "rate": 1095}, {"client": "Big League Printing", "cam": "Vikrant", "clerk": "Vikrant", "rate": 945}, {"client": "Zen Maid", "cam": "Vikrant", "clerk": "Vikrant", "rate": 894}, {"client": "S I Door & Hardware Inc.", "cam": "Vikrant", "clerk": "Vikrant", "rate": 814}, {"client": "3 Generations", "cam": "Satwinder", "clerk": "Satwinder", "rate": 697}, {"client": "The Closet Doctor", "cam": "Satwinder", "clerk": "Satwinder", "rate": 690}, {"client": "Dan Nichols Co Lucky 13 Tattoo", "cam": "Satwinder", "clerk": "Satwinder", "rate": 619}, {"client": "Smith & Associates", "cam": "Vikrant", "clerk": "Vikrant", "rate": 569}, {"client": "Kreadiv Media Inc (same owner as ItsModernMillie LLC)", "cam": "Satwinder", "clerk": "Satwinder", "rate": 537}, {"client": "Nava Corp DBA Grace Adult Day Healthcare", "cam": "Satwinder", "clerk": "Satwinder", "rate": 536}, {"client": "eWaste Direct Inc.", "cam": "Satwinder", "clerk": "Satwinder", "rate": 520}, {"client": "Brooklyn Fabrication", "cam": "Vikrant", "clerk": "Vikrant", "rate": 500}, {"client": "Copy & Paste Media", "cam": "Satwinder", "clerk": "Satwinder", "rate": 500}, {"client": "EchoVision, LLC", "cam": "Satwinder", "clerk": "Satwinder", "rate": 378.6}, {"client": "Uecker Enterprises, Incorporated (see Texas Railings and Elect Wayne Uecker)", "cam": "Satwinder", "clerk": "Satwinder", "rate": 275}, {"client": "Sapna NYC QUARTERLY", "cam": "Satwinder", "clerk": "Satwinder", "rate": 250}, {"client": "L&K Venture", "cam": "Satwinder", "clerk": "Satwinder", "rate": 231}, {"client": "Narativ", "cam": "Satwinder", "clerk": "Satwinder", "rate": 195}, {"client": "Silicon Valley Chapter ISSA-1", "cam": "Satwinder", "clerk": "Satwinder", "rate": 168}], "Becca": [{"client": "Mattco", "cam": "Mandy", "clerk": "Shilpa", "rate": 5900}, {"client": "Float Studio", "cam": "Zee", "clerk": "Zee", "rate": 3840}, {"client": "Poplar Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2995}, {"client": "Cypress Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2800}, {"client": "Mulberry Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2650}, {"client": "C.G. Jung Institute of NY", "cam": "Vikas", "clerk": "Shivanshi", "rate": 2004}, {"client": "Phoenix PatioScapes LLC dba Patio Partners", "cam": "Zee", "clerk": "Zee", "rate": 1860}, {"client": "F&C Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 1630}, {"client": "Learn Up Centers", "cam": "Vikas", "clerk": "Vikas", "rate": 1445}, {"client": "Huizenga Law Firm, P.C", "cam": "Zee", "clerk": "Zee", "rate": 1345}, {"client": "PD Soros Fellowships for New Americans", "cam": "Vikas", "clerk": "Shivanshi", "rate": 1300}, {"client": "Uptime IT LLC", "cam": "", "clerk": "", "rate": 1295}, {"client": "F&M Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 905}, {"client": "F&P Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 905}, {"client": "Nature's Lab School, LLC", "cam": "Zee", "clerk": "Zee", "rate": 765}, {"client": "Meconomy", "cam": "Vikas", "clerk": "Deepak", "rate": 750}, {"client": "TrendFocus", "cam": "Shivanshi", "clerk": "Shivanshi", "rate": 658}, {"client": "At the Table, Inc", "cam": "", "clerk": "Shivanshi", "rate": 650}, {"client": "Chamberlain Landscaping", "cam": "Zee", "clerk": "Zee", "rate": 600}, {"client": "LM West (same owner as Mattco)", "cam": "Mandy", "clerk": "Shilpa", "rate": 525}, {"client": "Moonsail Vacations (CPS Holdings)", "cam": "Vikas", "clerk": "Shivanshi", "rate": 425}, {"client": "Johnny D's Barber Shop, LLC", "cam": "Becca", "clerk": "", "rate": 78.75}, {"client": "Lesti (annually billed)", "cam": "", "clerk": "", "rate": 58.33}], "Vikas": [{"client": "MOCLC", "cam": "Vikas", "clerk": "Deepak", "rate": 3500}, {"client": "The Bartley Group ", "cam": "Vikas", "clerk": "Deepak", "rate": 1712.5}, {"client": "Greater Ozarks Realty", "cam": "Vikas", "clerk": "Deepak", "rate": 1500}, {"client": "Honest Skin", "cam": "Vikas", "clerk": "Deepak", "rate": 850}, {"client": "QSW LLC", "cam": "Vikas", "clerk": "Deepak", "rate": 704}, {"client": "Trinidad Mortgage (IHeart also)", "cam": "Vikas", "clerk": "Vikas", "rate": 700}, {"client": "Lucky Investments", "cam": "Vikas", "clerk": "Deepak", "rate": 625}, {"client": "IHeart | Trinidad Mortgage Servicing", "cam": "Vikas", "clerk": "Vikas", "rate": 375}, {"client": "Kensington West Capital LLC DBA Campbell Square Apartments", "cam": "Shivanshi", "clerk": "Deepak", "rate": 276}, {"client": "Terra Firma Management Inc.", "cam": "Shivanshi", "clerk": "Deepak", "rate": 210}, {"client": "Diane Dittmar (496 Sherwood Way, LLC)", "cam": "Vikas", "clerk": "Vikas", "rate": 200}], "Michelle": [{"client": "MPI Inc", "cam": "Michelle", "clerk": "", "rate": 8000}, {"client": "Thrive Internet Marketing Agency", "cam": "", "clerk": "", "rate": 2000}, {"client": "Total Studio Transformation", "cam": "Michelle", "clerk": "", "rate": 1608}, {"client": "Spartners", "cam": "", "clerk": "", "rate": 1600}, {"client": "Peace of Mind Pest Control", "cam": "Michelle", "clerk": "", "rate": 1395}, {"client": "Yang Law", "cam": "Michelle", "clerk": "Michelle", "rate": 995}, {"client": "Alpha Omega Electric", "cam": "Michelle", "clerk": "Michelle", "rate": 800}, {"client": "Five Star Pool & Spa", "cam": "Michelle", "clerk": "Michelle", "rate": 400}, {"client": "Miami City Massage", "cam": "Michelle", "clerk": "", "rate": 0}, {"client": "Northern Shore LLC (a Thrive Marketing co)", "cam": "", "clerk": "", "rate": 0}, {"client": "Rize Ideas, LLC (a Thrive Marketing co)", "cam": "", "clerk": "", "rate": 0}], "S+S": [{"client": "Right Way Profits (Debbie)", "cam": "S+S", "clerk": "S+S", "rate": 2750}, {"client": "Spire Business (Linda Brown)", "cam": "S+S", "clerk": "S+S", "rate": 2500}, {"client": "A+ Solutions (Christi Junge)", "cam": "S+S", "clerk": "S+S", "rate": 1350}, {"client": "CFO Accounting Services, LLC (Carla)", "cam": "S+S", "clerk": "S+S", "rate": 1000}, {"client": "About Profit (John Tapinis)", "cam": "S+S", "clerk": "S+S", "rate": 0}], "Simplified Team": [{"client": "Dewalt Law LLC", "cam": "", "clerk": "", "rate": 320}, {"client": "Aria Pilates Studio LLC", "cam": "", "clerk": "", "rate": 240}, {"client": "Wavera Works", "cam": "", "clerk": "", "rate": 240}]}, "totals": {"exp_rev": 134472.31, "act_rev": 111508.7, "exp_hrs": 1964.0, "act_hrs": 1850.7, "rev_per_hr_expected": 68.47, "rev_per_hr_actual": 60.25, "goal_min": 151, "goal_target": 175, "total_clients": 111, "total_people": 20, "qbo_total": 111508.7, "total_cost": 48658.47, "margin_expected": 63.8, "margin_actual": 56.4, "total_company_revenue": 141518.98, "unclaimed_income": 30010.28}, "tier_labels": ["Cat 5", "Cat 4", "Cat 3", "Cat 2", "Cat 1"]}, "August 2026": {"month": "August 2026", "silos": [{"name": "Melissa", "role": "LCAM", "exp_hrs": 1035.37, "act_hrs": 772.88, "exp_rev": 38411, "act_rev": 31824.6, "tiers": [3500, 9708, 16604, 1705, 6894], "cost": 18504.34, "margin_expected": 54.3, "margin_actual": 41.9}, {"name": "Liz", "role": "LCAM", "exp_hrs": 323, "act_hrs": 340.18, "exp_rev": 24038.6, "act_rev": 20511.6, "tiers": [6650, 9628, 3051, 3389.6, 1320], "cost": 7350.84, "margin_expected": 72.1, "margin_actual": 64.2}, {"name": "Becca", "role": "LCAM", "exp_hrs": 394.72, "act_hrs": 469.11, "exp_rev": 35384.08, "act_rev": 35572.75, "tiers": [24754, 3305, 4160, 1295, 1870.08], "cost": 14231.18, "margin_expected": 63.6, "margin_actual": 60.0}, {"name": "Vikas", "role": "LCAM", "exp_hrs": 170.91, "act_hrs": 113.64, "exp_rev": 10652.5, "act_rev": 10652.5, "tiers": [6712.5, 375, 1550, 1805, 210], "cost": 1477.25, "margin_expected": 88.0, "margin_actual": 86.1}, {"name": "Michelle", "role": "LCAM", "exp_hrs": 175, "act_hrs": 146.87, "exp_rev": 16798, "act_rev": 9600, "tiers": [15190, 0, 1608, 0, 0], "cost": 10475, "margin_expected": 37.6, "margin_actual": -9.1}, {"name": "S+S", "role": "Team", "exp_hrs": 0, "act_hrs": 0, "exp_rev": 9000, "act_rev": 10350, "tiers": [0, 0, 0, 0, 0], "cost": 0, "margin_expected": 100, "margin_actual": 100}, {"name": "Simplified Team", "role": "Team", "exp_hrs": 0, "act_hrs": 0, "exp_rev": 800, "act_rev": 560, "tiers": [0, 0, 0, 0, 0], "cost": 16.84, "margin_expected": 100, "margin_actual": 97.0}], "employees": [{"name": "Melissa", "silos": ["Melissa"], "capacity": 53, "actual": 48.1, "pct": {"Melissa": 100}}, {"name": "Vikas", "silos": ["Melissa", "Becca", "Vikas"], "capacity": 135, "actual": 120.8, "pct": {"Melissa": 1.8, "Becca": 62.5, "Vikas": 35.7}}, {"name": "Shilpa", "silos": ["Melissa", "Becca"], "capacity": 135, "actual": 78.5, "pct": {"Melissa": 100, "Becca": 0}}, {"name": "Mandy", "silos": ["Melissa", "Becca"], "capacity": 60, "actual": 64.8, "pct": {"Melissa": 38.3, "Becca": 61.7}}, {"name": "Daljit", "silos": ["Melissa"], "capacity": 135, "actual": 145.2, "pct": {"Melissa": 100}}, {"name": "Bhavika", "silos": ["Melissa"], "capacity": 67, "actual": 124.8, "pct": {"Melissa": 100}}, {"name": "Bhanu", "silos": ["Melissa"], "capacity": 135, "actual": 91.3, "pct": {"Melissa": 100}}, {"name": "Jobin", "silos": ["Melissa"], "capacity": 135, "actual": 146.8, "pct": {"Melissa": 100}}, {"name": "Parita", "silos": ["Melissa"], "capacity": 135, "actual": 54.2, "pct": {"Melissa": 100}}, {"name": "Ayushi", "silos": ["Melissa", "Becca"], "capacity": 135, "actual": 61.6, "pct": {"Melissa": 100, "Becca": 0}}, {"name": "Mayank", "silos": ["Melissa"], "capacity": 80, "actual": 48.5, "pct": {"Melissa": 100}}, {"name": "Liz", "silos": ["Liz"], "capacity": 53, "actual": 87.0, "pct": {"Liz": 100}}, {"name": "Vikrant", "silos": ["Liz"], "capacity": 135, "actual": 155.3, "pct": {"Liz": 100}}, {"name": "Satwinder", "silos": ["Liz"], "capacity": 135, "actual": 97.9, "pct": {"Liz": 100}}, {"name": "Becca", "silos": ["Becca"], "capacity": 53, "actual": 71.0, "pct": {"Becca": 100}}, {"name": "Zee", "silos": ["Becca"], "capacity": 73, "actual": 58.4, "pct": {"Becca": 100}}, {"name": "Shivanshi", "silos": ["Becca", "Vikas"], "capacity": 135, "actual": 116.9, "pct": {"Becca": 91.2, "Vikas": 8.8}}, {"name": "Deepak", "silos": ["Becca", "Vikas"], "capacity": 135, "actual": 124.7, "pct": {"Becca": 17.9, "Vikas": 82.1}}, {"name": "Andrea", "silos": ["Becca"], "capacity": null, "actual": null, "pct": {"Becca": 100}}, {"name": "Michelle", "silos": ["Michelle"], "capacity": 40, "actual": 28.6, "pct": {"Michelle": 100}}, {"name": "Parth", "silos": ["Michelle"], "capacity": 135, "actual": 118.3, "pct": {"Michelle": 100}}], "silo_team": {"Melissa": [{"name": "Melissa", "pct": 100, "capacity": 53, "actual": 48.15}, {"name": "Vikas", "pct": 1.8, "capacity": 135, "actual": 5.35}, {"name": "Shilpa", "pct": 100, "capacity": 135, "actual": 49.35}, {"name": "Mandy", "pct": 38.3, "capacity": 60, "actual": 2}, {"name": "Daljit", "pct": 100, "capacity": 135, "actual": 145.16}, {"name": "Bhavika", "pct": 100, "capacity": 67, "actual": 124.76}, {"name": "Bhanu", "pct": 100, "capacity": 135, "actual": 91.33}, {"name": "Jobin", "pct": 100, "capacity": 135, "actual": 146.85}, {"name": "Parita", "pct": 100, "capacity": 135, "actual": 54.2}, {"name": "Ayushi", "pct": 100, "capacity": 135, "actual": 57.23}, {"name": "Mayank", "pct": 100, "capacity": 80, "actual": 48.5}], "Liz": [{"name": "Liz", "pct": 100, "capacity": 53, "actual": 87.01}, {"name": "Vikrant", "pct": 100, "capacity": 135, "actual": 155.26}, {"name": "Satwinder", "pct": 100, "capacity": 135, "actual": 97.91}], "Becca": [{"name": "Becca", "pct": 100, "capacity": 53, "actual": 70.99}, {"name": "Vikas", "pct": 62.5, "capacity": 135, "actual": 77.93}, {"name": "Shilpa", "pct": 0, "capacity": 135, "actual": 29.1}, {"name": "Zee", "pct": 100, "capacity": 73, "actual": 58.37}, {"name": "Shivanshi", "pct": 91.2, "capacity": 135, "actual": 93.63}, {"name": "Deepak", "pct": 17.9, "capacity": 135, "actual": 71.9}, {"name": "Mandy", "pct": 61.7, "capacity": 60, "actual": 62.77}, {"name": "Andrea", "pct": 100, "capacity": null, "actual": null}, {"name": "Ayushi", "pct": 0, "capacity": 135, "actual": 4.42}], "Vikas": [{"name": "Vikas", "pct": 35.7, "capacity": 135, "actual": 37.51}, {"name": "Shivanshi", "pct": 8.8, "capacity": 135, "actual": 23.3}, {"name": "Deepak", "pct": 82.1, "capacity": 135, "actual": 52.83}], "Michelle": [{"name": "Michelle", "pct": 100, "capacity": 40, "actual": 28.58}, {"name": "Parth", "pct": 100, "capacity": 135, "actual": 118.29}], "S+S": [{"name": "S+S Team", "pct": 91.8, "capacity": 0, "actual": null}], "Simplified Team": [{"name": "S+S Team", "pct": 8.2, "capacity": 0, "actual": null}]}, "silo_clients": {"Melissa": [{"client": "Global Fueling Systems", "cam": "Bhavika", "clerk": "Ayushi", "rate": 4800}, {"client": "Kadara (same owners as MediZap)", "cam": "Jobin", "clerk": "Parita", "rate": 4250}, {"client": "Kevin Anderson & Associates", "cam": "Mandy", "clerk": "Daljit", "rate": 3895}, {"client": "AEG (Alderac)", "cam": "Melissa", "clerk": "Bhavika", "rate": 3500}, {"client": "Platinum Millworks", "cam": "Jobin", "clerk": "Bhavika", "rate": 3000}, {"client": "MediZap (same owners as Kadara)", "cam": "Jobin", "clerk": "Parita", "rate": 2705}, {"client": "Martson Construction", "cam": "Shilpa", "clerk": "Daljit", "rate": 1613}, {"client": "T&R Business solutions dba APC Premium Services", "cam": "Jobin", "clerk": "Parita", "rate": 1450}, {"client": "Reclaimed by Demant, LLC", "cam": "Shilpa", "clerk": "Daljit", "rate": 1250}, {"client": "Mainstay Data Services", "cam": "Shilpa", "clerk": "Bhanu", "rate": 1100}, {"client": "Duke's Liquor Box", "cam": "Shilpa", "clerk": "Daljit", "rate": 850}, {"client": "Accurate Roof SystemsTexas", "cam": "Melissa", "clerk": "Melissa", "rate": 820}, {"client": "Boardwalk and Basil", "cam": "Shilpa", "clerk": "Daljit", "rate": 750}, {"client": "Carroll Hall & Industrious", "cam": "Shilpa", "clerk": "Bhanu", "rate": 750}, {"client": "Mac Design Studio", "cam": "Shilpa", "clerk": "Daljit", "rate": 680}, {"client": "Beam Center", "cam": "Melissa", "clerk": "Melissa", "rate": 650}, {"client": "Revolution Remix", "cam": "Shilpa", "clerk": "Daljit", "rate": 650}, {"client": "Wellspring Women's Center", "cam": "Melissa", "clerk": "Melissa", "rate": 650}, {"client": "Curious Communications", "cam": "Daljit", "clerk": "Daljit", "rate": 600}, {"client": "Clawson Trucking", "cam": "Jobin", "clerk": "Bhavika", "rate": 550}, {"client": "DA Property Management Services, Inc", "cam": "Jobin", "clerk": "Melissa", "rate": 550}, {"client": "RAVA Films LLC", "cam": "Daljit", "clerk": "Daljit", "rate": 500}, {"client": "The Sound Coop", "cam": "Vikas", "clerk": "Vikas", "rate": 500}, {"client": "Trees New York", "cam": "Shilpa", "clerk": "Bhanu", "rate": 500}, {"client": "Accurate Roof Systems - Oklahoma", "cam": "Melissa", "clerk": "Melissa", "rate": 450}, {"client": "Futurepoem", "cam": "Shilpa", "clerk": "Bhanu", "rate": 400}, {"client": "Lambert & Sons Floor Covering", "cam": "Melissa", "clerk": "Client", "rate": 360}, {"client": "Christopher Duggan Photography", "cam": "Shilpa", "clerk": "Bhanu", "rate": 344}, {"client": "Species by the Thousands", "cam": "Shilpa", "clerk": "Daljit", "rate": 195}, {"client": "Kevin Anderson PERSONAL", "cam": "Mandy", "clerk": "Mandy", "rate": 99}, {"client": "EO Sacramento", "cam": "Shilpa", "clerk": "Daljit", "rate": 0}, {"client": "Nevada Assisted Living", "cam": "Jobin", "clerk": "Melissa", "rate": 0}, {"client": "Nevada Extended Living", "cam": "Jobin", "clerk": "Melissa", "rate": 0}], "Liz": [{"client": "Sticker Farmer Sacramento LLC", "cam": "Vikrant", "clerk": "Vikrant", "rate": 2990}, {"client": "Thinkstream", "cam": "Vikrant", "clerk": "Vikrant", "rate": 2500}, {"client": "North Star Consulting", "cam": "Satwinder", "clerk": "Satwinder", "rate": 2060}, {"client": "Little Flowers Montessori", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1850}, {"client": "Jimmie Jack Fishing, Inc.", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1600}, {"client": "CDLJA, LLC", "cam": "Satwinder", "clerk": "Satwinder", "rate": 1400}, {"client": "Nautilus Sailing", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1225}, {"client": "Banker Creative", "cam": "Satwinder", "clerk": "Satwinder", "rate": 1095}, {"client": "Big League Printing", "cam": "Vikrant", "clerk": "Vikrant", "rate": 945}, {"client": "Zen Maid", "cam": "Vikrant", "clerk": "Vikrant", "rate": 894}, {"client": "S I Door & Hardware Inc.", "cam": "Vikrant", "clerk": "Vikrant", "rate": 814}, {"client": "3 Generations", "cam": "Satwinder", "clerk": "Satwinder", "rate": 697}, {"client": "The Closet Doctor", "cam": "Satwinder", "clerk": "Satwinder", "rate": 690}, {"client": "Dan Nichols Co Lucky 13 Tattoo", "cam": "Satwinder", "clerk": "Satwinder", "rate": 619}, {"client": "Smith & Associates", "cam": "Vikrant", "clerk": "Vikrant", "rate": 569}, {"client": "Kreadiv Media Inc (same owner as ItsModernMillie LLC)", "cam": "Satwinder", "clerk": "Satwinder", "rate": 537}, {"client": "Nava Corp DBA Grace Adult Day Healthcare", "cam": "Satwinder", "clerk": "Satwinder", "rate": 536}, {"client": "eWaste Direct Inc.", "cam": "Satwinder", "clerk": "Satwinder", "rate": 520}, {"client": "Brooklyn Fabrication", "cam": "Vikrant", "clerk": "Vikrant", "rate": 500}, {"client": "Copy & Paste Media", "cam": "Satwinder", "clerk": "Satwinder", "rate": 500}, {"client": "EchoVision, LLC", "cam": "Satwinder", "clerk": "Satwinder", "rate": 378.6}, {"client": "Uecker Enterprises, Incorporated (see Texas Railings and Elect Wayne Uecker)", "cam": "Satwinder", "clerk": "Satwinder", "rate": 275}, {"client": "Sapna NYC QUARTERLY", "cam": "Satwinder", "clerk": "Satwinder", "rate": 250}, {"client": "L&K Venture", "cam": "Satwinder", "clerk": "Satwinder", "rate": 231}, {"client": "Narativ", "cam": "Satwinder", "clerk": "Satwinder", "rate": 195}, {"client": "Silicon Valley Chapter ISSA-1", "cam": "Satwinder", "clerk": "Satwinder", "rate": 168}], "Becca": [{"client": "Mattco", "cam": "Mandy", "clerk": "", "rate": 5900}, {"client": "Float Studio", "cam": "Zee", "clerk": "Zee", "rate": 3840}, {"client": "Poplar Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2995}, {"client": "Cypress Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2800}, {"client": "Mulberry Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2650}, {"client": "C.G. Jung Institute of NY", "cam": "Vikas", "clerk": "Shivanshi", "rate": 2004}, {"client": "Phoenix PatioScapes LLC dba Patio Partners", "cam": "Zee", "clerk": "Zee", "rate": 1860}, {"client": "F&C Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 1630}, {"client": "Learn Up Centers", "cam": "Vikas", "clerk": "Vikas", "rate": 1445}, {"client": "Huizenga Law Firm, P.C", "cam": "Zee", "clerk": "Zee", "rate": 1345}, {"client": "PD Soros Fellowships for New Americans", "cam": "Vikas", "clerk": "Shivanshi", "rate": 1300}, {"client": "Uptime IT LLC", "cam": "", "clerk": "Deepak", "rate": 1295}, {"client": "F&M Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 905}, {"client": "F&P Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 905}, {"client": "Nature's Lab School, LLC", "cam": "Zee", "clerk": "Zee", "rate": 765}, {"client": "Meconomy", "cam": "Vikas", "clerk": "Deepak", "rate": 750}, {"client": "TrendFocus", "cam": "Shivanshi", "clerk": "Shivanshi", "rate": 658}, {"client": "At the Table, Inc", "cam": "N/A", "clerk": "Shivanshi", "rate": 650}, {"client": "Chamberlain Landscaping", "cam": "Zee", "clerk": "Zee", "rate": 600}, {"client": "LM West (same owner as Mattco)", "cam": "Mandy", "clerk": "", "rate": 525}, {"client": "Moonsail Vacations (CPS Holdings)", "cam": "Vikas", "clerk": "Shivanshi", "rate": 425}, {"client": "Johnny D's Barber Shop, LLC", "cam": "Becca", "clerk": "Client", "rate": 78.75}, {"client": "Lesti (annually billed)", "cam": "", "clerk": "", "rate": 58.33}], "Vikas": [{"client": "MOCLC", "cam": "Vikas", "clerk": "Deepak", "rate": 3500}, {"client": "The Bartley Group", "cam": "Vikas", "clerk": "Deepak", "rate": 1712.5}, {"client": "Greater Ozarks Realty", "cam": "Vikas", "clerk": "Deepak", "rate": 1500}, {"client": "Honest Skin", "cam": "Vikas", "clerk": "Deepak", "rate": 850}, {"client": "QSW LLC", "cam": "Vikas", "clerk": "Deepak", "rate": 704}, {"client": "Trinidad Mortgage (IHeart also)", "cam": "Vikas", "clerk": "Vikas", "rate": 700}, {"client": "Lucky Investments", "cam": "Vikas", "clerk": "Deepak", "rate": 625}, {"client": "IHeart | Trinidad Mortgage Servicing", "cam": "Vikas", "clerk": "Vikas", "rate": 375}, {"client": "Kensington West Capital LLC DBA Campbell Square Apartments", "cam": "Shivanshi", "clerk": "Deepak", "rate": 276}, {"client": "Terra Firma Management Inc.", "cam": "Shivanshi", "clerk": "Deepak", "rate": 210}, {"client": "Diane Dittmar (496 Sherwood Way, LLC)", "cam": "Vikas", "clerk": "Vikas", "rate": 200}], "Michelle": [{"client": "MPI Inc", "cam": "Michelle", "clerk": "Parth", "rate": 8000}, {"client": "Thrive Internet Marketing Agency", "cam": "Michelle", "clerk": "", "rate": 2000}, {"client": "Total Studio Transformation", "cam": "Michelle", "clerk": "-", "rate": 1608}, {"client": "Spartners", "cam": "Michelle", "clerk": "N/A", "rate": 1600}, {"client": "Peace of Mind Pest Control", "cam": "Michelle", "clerk": "", "rate": 1395}, {"client": "Yang Law", "cam": "Michelle", "clerk": "Michelle", "rate": 995}, {"client": "Alpha Omega Electric", "cam": "Michelle", "clerk": "Michelle", "rate": 800}, {"client": "Five Star Pool & Spa", "cam": "Michelle", "clerk": "Michelle", "rate": 400}], "S+S": [{"client": "Right Way Profits (Debbie)", "cam": "S+S", "clerk": "S+S", "rate": 5500}, {"client": "Spire Business (Linda Brown)", "cam": "S+S", "clerk": "S+S", "rate": 2500}, {"client": "CFO Accounting Services, LLC (Carla)", "cam": "S+S", "clerk": "S+S", "rate": 1000}, {"client": "A+ Solutions (Christi Junge)", "cam": "S+S", "clerk": "S+S", "rate": 0}, {"client": "About Profit (John Tapinis)", "cam": "S+S", "clerk": "S+S", "rate": 0}], "Simplified Team": [{"client": "Dewalt Law LLC", "cam": "N/A", "clerk": "N/A", "rate": 320}, {"client": "Aria Pilates Studio LLC", "cam": "N/A", "clerk": "N/A", "rate": 240}, {"client": "Wavera Works", "cam": "N/A", "clerk": "N/A", "rate": 240}]}, "totals": {"exp_rev": 135084.18, "act_rev": 119071.45, "exp_hrs": 2099.0, "act_hrs": 1842.68, "rev_per_hr_expected": 64.36, "rev_per_hr_actual": 64.62, "goal_min": 151, "goal_target": 175, "total_clients": 109, "total_people": 21, "qbo_total": 123350.95, "total_cost": 52055.45, "margin_expected": 61.5, "margin_actual": 56.3, "total_company_revenue": 123350.95, "unclaimed_income": 4279.5}, "tier_labels": ["Cat 5", "Cat 4", "Cat 3", "Cat 2", "Cat 1"]}};
+MONTHS["September 2026"] = {"month": "September 2026", "silos": [{"name": "Melissa", "role": "LCAM", "exp_hrs": 619.2, "act_hrs": 613.46, "exp_rev": 29581.5, "act_rev": 25461, "tiers": [10455, 4715, 8049, 360, 6002.5], "cost": 14690.74, "margin_expected": 51.6, "margin_actual": 42.3}, {"name": "Shilpa", "role": "LCAM", "exp_hrs": 327.1, "act_hrs": 255.94, "exp_rev": 10182, "act_rev": 9082.1, "tiers": [0, 4993, 1600, 1345, 2244], "cost": 3409.09, "margin_expected": 72.1, "margin_actual": 62.5}, {"name": "Liz", "role": "LCAM", "exp_hrs": 323, "act_hrs": 402.12, "exp_rev": 24038.6, "act_rev": 24546.99, "tiers": [4590, 11688, 3051, 3389.6, 1320], "cost": 7410.33, "margin_expected": 72.1, "margin_actual": 69.8}, {"name": "Becca", "role": "LCAM", "exp_hrs": 430.46, "act_hrs": 526.31, "exp_rev": 35384.08, "act_rev": 34800.75, "tiers": [24754, 3305, 4160, 1295, 1870.08], "cost": 15477.22, "margin_expected": 61.9, "margin_actual": 55.5}, {"name": "Vikas", "role": "LCAM", "exp_hrs": 182.22, "act_hrs": 180.92, "exp_rev": 10652.5, "act_rev": 10652.5, "tiers": [6712.5, 1075, 850, 1805, 210], "cost": 1653.36, "margin_expected": 87.0, "margin_actual": 84.5}, {"name": "Michelle", "role": "LCAM", "exp_hrs": 175, "act_hrs": 147.14, "exp_rev": 16903, "act_rev": 10293, "tiers": [15190, 0, 1608, 0, 0], "cost": 10692, "margin_expected": 38.0, "margin_actual": -3.9}, {"name": "S+S", "role": "Team", "exp_hrs": 0, "act_hrs": 0, "exp_rev": 9000, "act_rev": 9000, "tiers": [0, 0, 0, 0, 0], "cost": 0, "margin_expected": 100, "margin_actual": 100}, {"name": "Simplified Team", "role": "Team", "exp_hrs": 30.03, "act_hrs": 25.47, "exp_rev": 885, "act_rev": 0, "tiers": [0, 0, 0, 0, 0], "cost": 375.44, "margin_expected": 57.6, "margin_actual": null}], "employees": [{"name": "Melissa", "silos": ["Melissa"], "capacity": 53, "actual": 76.8, "pct": {"Melissa": 100}}, {"name": "Liz", "silos": ["Liz"], "capacity": 53, "actual": 118.4, "pct": {"Liz": 100}}, {"name": "Becca", "silos": ["Becca"], "capacity": 53, "actual": 103.8, "pct": {"Becca": 100}}, {"name": "Vikas", "silos": ["Melissa", "Becca", "Vikas"], "capacity": 135, "actual": 118.2, "pct": {"Melissa": 2.0, "Becca": 57.6, "Vikas": 40.4}}, {"name": "Michelle", "silos": ["Michelle"], "capacity": 40, "actual": 38.0, "pct": {"Michelle": 100}}, {"name": "Shilpa", "silos": ["Shilpa", "Simplified Team"], "capacity": 135, "actual": 73.0, "pct": {"Shilpa": 77.8, "Simplified Team": 22.2}}, {"name": "Zee", "silos": ["Becca"], "capacity": 73, "actual": 68.6, "pct": {"Becca": 100}}, {"name": "Shivanshi", "silos": ["Becca", "Vikas"], "capacity": 135, "actual": 129.0, "pct": {"Becca": 87.5, "Vikas": 12.5}}, {"name": "Deepak", "silos": ["Becca", "Vikas"], "capacity": 135, "actual": 140.3, "pct": {"Becca": 17.9, "Vikas": 82.1}}, {"name": "Mandy", "silos": ["Melissa", "Becca"], "capacity": 128, "actual": 80.3, "pct": {"Melissa": 34.1, "Becca": 65.9}}, {"name": "Daljit", "silos": ["Melissa", "Shilpa"], "capacity": 135, "actual": 137.5, "pct": {"Melissa": 35.5, "Shilpa": 64.5}}, {"name": "Vikrant", "silos": ["Liz"], "capacity": 135, "actual": 166.2, "pct": {"Liz": 100}}, {"name": "Satwinder", "silos": ["Liz"], "capacity": 135, "actual": 113.8, "pct": {"Liz": 100}}, {"name": "Bhavika", "silos": ["Melissa"], "capacity": 67, "actual": 148.6, "pct": {"Melissa": 100}}, {"name": "Bhanu", "silos": ["Shilpa"], "capacity": 135, "actual": 103.5, "pct": {"Shilpa": 100}}, {"name": "Jobin", "silos": ["Melissa"], "capacity": 135, "actual": 146.6, "pct": {"Melissa": 100}}, {"name": "Parita", "silos": ["Melissa"], "capacity": 135, "actual": 72.6, "pct": {"Melissa": 100}}, {"name": "Ayushi", "silos": ["Melissa"], "capacity": 135, "actual": 168.0, "pct": {"Melissa": 100}}, {"name": "Parth", "silos": ["Michelle"], "capacity": 135, "actual": 148.2, "pct": {"Michelle": 100}}, {"name": "Andrea", "silos": ["Becca"], "capacity": null, "actual": null, "pct": {"Becca": 100}}], "silo_team": {"Melissa": [{"name": "Melissa", "pct": 100, "capacity": 53, "actual": 69.21}, {"name": "Jobin", "pct": 100, "capacity": 135, "actual": 146.04}, {"name": "Bhavika", "pct": 100, "capacity": 67, "actual": 132.32}, {"name": "Ayushi", "pct": 100, "capacity": 135, "actual": 128.02}, {"name": "Parita", "pct": 100, "capacity": 135, "actual": 72.61}, {"name": "Daljit", "pct": 35.5, "capacity": 135, "actual": 17.38}, {"name": "Shilpa", "pct": 0, "capacity": 135, "actual": 12.43}, {"name": "Bhanu", "pct": 0, "capacity": 135, "actual": 12.06}, {"name": "Michelle", "pct": 0, "capacity": 40, "actual": 6.7}, {"name": "Zee", "pct": 0, "capacity": 73, "actual": 5.47}, {"name": "Parth", "pct": 0, "capacity": 135, "actual": 4.67}, {"name": "Mandy", "pct": 34.1, "capacity": 128, "actual": 3}, {"name": "Vikas", "pct": 2.0, "capacity": 135, "actual": 2.23}, {"name": "Becca", "pct": 0, "capacity": 53, "actual": 1.32}], "Shilpa": [{"name": "Shilpa", "pct": 77.8, "capacity": 135, "actual": 55.39}, {"name": "Daljit", "pct": 64.5, "capacity": 135, "actual": 120.14}, {"name": "Bhanu", "pct": 100, "capacity": 135, "actual": 71.68}, {"name": "Melissa", "pct": 0, "capacity": 53, "actual": 4.7}, {"name": "Michelle", "pct": 0, "capacity": 40, "actual": 3}, {"name": "Parth", "pct": 0, "capacity": 135, "actual": 1.03}], "Liz": [{"name": "Liz", "pct": 100, "capacity": 53, "actual": 118.43}, {"name": "Vikrant", "pct": 100, "capacity": 135, "actual": 166.19}, {"name": "Satwinder", "pct": 100, "capacity": 135, "actual": 113.75}, {"name": "Michelle", "pct": 0, "capacity": 40, "actual": 3}, {"name": "Parth", "pct": 0, "capacity": 135, "actual": 0.75}], "Becca": [{"name": "Becca", "pct": 100, "capacity": 53, "actual": 102.48}, {"name": "Deepak", "pct": 17.9, "capacity": 135, "actual": 84.75}, {"name": "Shivanshi", "pct": 87.5, "capacity": 135, "actual": 84.38}, {"name": "Vikas", "pct": 57.6, "capacity": 135, "actual": 81.63}, {"name": "Mandy", "pct": 65.9, "capacity": 128, "actual": 77.27}, {"name": "Zee", "pct": 100, "capacity": 73, "actual": 63.17}, {"name": "Ayushi", "pct": 0, "capacity": 135, "actual": 14.82}, {"name": "Parth", "pct": 0, "capacity": 135, "actual": 12.07}, {"name": "Michelle", "pct": 0, "capacity": 40, "actual": 4}, {"name": "Melissa", "pct": 0, "capacity": 53, "actual": 1.15}, {"name": "Jobin", "pct": 0, "capacity": 135, "actual": 0.59}, {"name": "Andrea", "pct": 100, "capacity": null, "actual": 0}], "Vikas": [{"name": "Vikas", "pct": 40.4, "capacity": 135, "actual": 34.33}, {"name": "Deepak", "pct": 82.1, "capacity": 135, "actual": 55.59}, {"name": "Shivanshi", "pct": 12.5, "capacity": 135, "actual": 44.58}, {"name": "Ayushi", "pct": 0, "capacity": 135, "actual": 25.12}, {"name": "Bhavika", "pct": 0, "capacity": 67, "actual": 16.3}, {"name": "Michelle", "pct": 0, "capacity": 40, "actual": 5}], "Michelle": [{"name": "Michelle", "pct": 100, "capacity": 40, "actual": 16.25}, {"name": "Parth", "pct": 100, "capacity": 135, "actual": 129.64}, {"name": "Melissa", "pct": 0, "capacity": 53, "actual": 1.25}], "S+S": [{"name": "S+S Team", "pct": 91.0, "capacity": 0, "actual": null}], "Simplified Team": [{"name": "S+S Team", "pct": 9.0, "capacity": 0, "actual": null}, {"name": "Bhanu", "pct": 0, "capacity": 135, "actual": 19.79}, {"name": "Shilpa", "pct": 22.2, "capacity": 135, "actual": 5.18}, {"name": "Melissa", "pct": 0, "capacity": 53, "actual": 0.5}]}, "silo_clients": {"Melissa": [{"client": "Global Fueling Systems", "cam": "Bhavika", "clerk": "Ayushi", "rate": 4800, "tier": "Cat 3"}, {"client": "Kadara (same owners as MediZap)", "cam": "Jobin", "clerk": "Parita", "rate": 4250, "tier": "Cat 5"}, {"client": "Kevin Anderson & Associates", "cam": "Mandy", "clerk": "Daljit", "rate": 3895, "tier": "Cat 4"}, {"client": "AEG (Alderac)", "cam": "Melissa", "clerk": "Bhavika", "rate": 3500, "tier": "Cat 5"}, {"client": "Platinum Millworks", "cam": "Jobin", "clerk": "Bhavika", "rate": 3000, "tier": "Cat 1"}, {"client": "MediZap (same owners as Kadara)", "cam": "Jobin", "clerk": "Parita", "rate": 2705, "tier": "Cat 5"}, {"client": "T&R Business solutions dba APC Premium Services", "cam": "Jobin", "clerk": "Parita", "rate": 1450, "tier": "Cat 3"}, {"client": "SkyRocket Reading", "cam": "Jobin", "clerk": "Parita", "rate": 1300, "tier": "Cat 1"}, {"client": "Accurate Roof SystemsTexas", "cam": "Melissa", "clerk": "N/A", "rate": 820, "tier": "Cat 4"}, {"client": "Beam Center", "cam": "Melissa", "clerk": "Melissa", "rate": 650, "tier": "Cat 3"}, {"client": "Wellspring Women's Center", "cam": "Melissa", "clerk": "Melissa", "rate": 650, "tier": "Cat 1"}, {"client": "Clawson Trucking", "cam": "Jobin", "clerk": "Bhavika", "rate": 550, "tier": "Cat 3"}, {"client": "DA Property Management Services, Inc", "cam": "Melissa", "clerk": "Jobin", "rate": 550, "tier": "Cat 1"}, {"client": "The Sound Coop", "cam": "Vikas", "clerk": "Vikas", "rate": 500, "tier": "Cat 3"}, {"client": "Accurate Roof Systems - Oklahoma", "cam": "Melissa", "clerk": "N/A", "rate": 450, "tier": "Cat 1"}, {"client": "Lambert & Sons Floor Covering", "cam": "Bhavika", "clerk": "Client", "rate": 360, "tier": "Cat 2"}, {"client": "Kevin Anderson PERSONAL", "cam": "Mandy", "clerk": "Mandy", "rate": 99, "tier": "Cat 3"}, {"client": "Nevada Extended Living", "cam": "Jobin", "clerk": "N/A", "rate": 52.5, "tier": "Cat 1"}], "Shilpa": [{"client": "Martson Construction", "cam": "Daljit", "clerk": "Daljit", "rate": 1613, "tier": "Cat 4"}, {"client": "Reclaimed by Demant, LLC", "cam": "Daljit", "clerk": "Daljit", "rate": 1250, "tier": "Cat 4"}, {"client": "Mainstay Data Services", "cam": "Shilpa", "clerk": "Bhanu", "rate": 1100, "tier": "Cat 3"}, {"client": "Duke's Liquor Box", "cam": "Daljit", "clerk": "Daljit", "rate": 850, "tier": "Cat 4"}, {"client": "Boardwalk and Basil", "cam": "Daljit", "clerk": "Daljit", "rate": 750, "tier": "Cat 1"}, {"client": "Carroll Hall & Industrious", "cam": "Shilpa", "clerk": "Bhanu", "rate": 750, "tier": "Cat 1"}, {"client": "Mac Design Studio", "cam": "Daljit", "clerk": "Daljit", "rate": 680, "tier": "Cat 4"}, {"client": "Revolution Remix", "cam": "Daljit", "clerk": "Daljit", "rate": 650, "tier": "Cat 2"}, {"client": "Curious Communications", "cam": "Daljit", "clerk": "Daljit", "rate": 600, "tier": "Cat 4"}, {"client": "RAVA Films LLC", "cam": "Daljit", "clerk": "Daljit", "rate": 500, "tier": "Cat 3"}, {"client": "Trees New York", "cam": "Shilpa", "clerk": "Bhanu", "rate": 500, "tier": "Cat 2"}, {"client": "Futurepoem", "cam": "Shilpa", "clerk": "Bhanu", "rate": 400, "tier": "Cat 1"}, {"client": "Christopher Duggan Photography", "cam": "Shilpa", "clerk": "Bhanu", "rate": 344, "tier": "Cat 1"}, {"client": "Species by the Thousands", "cam": "Daljit", "clerk": "Daljit", "rate": 195, "tier": "Cat 2"}, {"client": "EO Sacramento", "cam": "Daljit", "clerk": "Daljit", "rate": 0, "tier": "Cat 3"}], "Liz": [{"client": "Sticker Farmer Sacramento LLC", "cam": "Vikrant", "clerk": "Vikrant", "rate": 2990, "tier": "Cat 5"}, {"client": "Thinkstream", "cam": "Vikrant", "clerk": "Vikrant", "rate": 2500, "tier": "Cat 4"}, {"client": "North Star Consulting", "cam": "Satwinder", "clerk": "Satwinder", "rate": 2060, "tier": "Cat 4"}, {"client": "Little Flowers Montessori", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1850, "tier": "Cat 4"}, {"client": "Jimmie Jack Fishing, Inc.", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1600, "tier": "Cat 5"}, {"client": "CDLJA, LLC", "cam": "Satwinder", "clerk": "Satwinder", "rate": 1400, "tier": "Cat 4"}, {"client": "Nautilus Sailing", "cam": "Vikrant", "clerk": "Vikrant", "rate": 1225, "tier": "Cat 4"}, {"client": "Banker Creative", "cam": "Satwinder", "clerk": "Satwinder", "rate": 1095, "tier": "Cat 3"}, {"client": "Big League Printing", "cam": "Vikrant", "clerk": "Vikrant", "rate": 945, "tier": "Cat 4"}, {"client": "Zen Maid", "cam": "Vikrant", "clerk": "Vikrant", "rate": 894, "tier": "Cat 4"}, {"client": "S I Door & Hardware Inc.", "cam": "Vikrant", "clerk": "Vikrant", "rate": 814, "tier": "Cat 4"}, {"client": "3 Generations", "cam": "Satwinder", "clerk": "Satwinder", "rate": 697, "tier": "Cat 3"}, {"client": "The Closet Doctor", "cam": "Satwinder", "clerk": "Satwinder", "rate": 690, "tier": "Cat 3"}, {"client": "Dan Nichols Co Lucky 13 Tattoo", "cam": "Satwinder", "clerk": "Satwinder", "rate": 619, "tier": "Cat 1"}, {"client": "Smith & Associates", "cam": "Vikrant", "clerk": "Vikrant", "rate": 569, "tier": "Cat 3"}, {"client": "Kreadiv Media Inc (same owner as ItsModernMillie LLC)", "cam": "Satwinder", "clerk": "Satwinder", "rate": 537, "tier": "Cat 2"}, {"client": "Nava Corp DBA Grace Adult Day Healthcare", "cam": "Satwinder", "clerk": "Satwinder", "rate": 536, "tier": "Cat 2"}, {"client": "eWaste Direct Inc.", "cam": "Satwinder", "clerk": "Satwinder", "rate": 520, "tier": "Cat 2"}, {"client": "Brooklyn Fabrication", "cam": "Vikrant", "clerk": "Vikrant", "rate": 500, "tier": "Cat 2"}, {"client": "Copy & Paste Media", "cam": "Satwinder", "clerk": "Satwinder", "rate": 500, "tier": "Cat 2"}, {"client": "EchoVision, LLC", "cam": "Satwinder", "clerk": "Satwinder", "rate": 378.6, "tier": "Cat 2"}, {"client": "Uecker Enterprises, Inc and Uecker Holdings LLC", "cam": "Satwinder", "clerk": "Satwinder", "rate": 275, "tier": "Cat 1"}, {"client": "Sapna NYC QUARTERLY", "cam": "Satwinder", "clerk": "Satwinder", "rate": 250, "tier": "Cat 2"}, {"client": "L&K Venture", "cam": "Satwinder", "clerk": "Satwinder", "rate": 231, "tier": "Cat 1"}, {"client": "Narativ", "cam": "Satwinder", "clerk": "Satwinder", "rate": 195, "tier": "Cat 1"}, {"client": "Silicon Valley Chapter ISSA-1", "cam": "Satwinder", "clerk": "Satwinder", "rate": 168, "tier": "Cat 2"}], "Becca": [{"client": "Mattco", "cam": "Mandy", "clerk": "Shivanshi", "rate": 5900, "tier": "Cat 5"}, {"client": "Float Studio", "cam": "Zee", "clerk": "Zee", "rate": 3840, "tier": "Cat 5"}, {"client": "Poplar Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2995, "tier": "Cat 5"}, {"client": "Cypress Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2800, "tier": "Cat 5"}, {"client": "Mulberry Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 2650, "tier": "Cat 5"}, {"client": "C.G. Jung Institute of NY", "cam": "Becca", "clerk": "Shivanshi", "rate": 2004, "tier": "Cat 5"}, {"client": "Phoenix PatioScapes LLC dba Patio Partners", "cam": "Zee", "clerk": "Zee", "rate": 1860, "tier": "Cat 4"}, {"client": "F&C Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 1630, "tier": "Cat 5"}, {"client": "Learn Up Centers", "cam": "Vikas", "clerk": "Vikas", "rate": 1445, "tier": "Cat 4"}, {"client": "Huizenga Law Firm, P.C", "cam": "Zee", "clerk": "Zee", "rate": 1345, "tier": "Cat 3"}, {"client": "PD Soros Fellowships for New Americans", "cam": "Becca", "clerk": "Shivanshi", "rate": 1300, "tier": "Cat 3"}, {"client": "Uptime IT LLC", "cam": "Mandy", "clerk": "Deepak", "rate": 1295, "tier": "Cat 2"}, {"client": "F&M Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 905, "tier": "Cat 5"}, {"client": "F&P Tree LP", "cam": "Zee", "clerk": "Vikas", "rate": 905, "tier": "Cat 5"}, {"client": "Nature's Lab School, LLC", "cam": "Zee", "clerk": "Zee", "rate": 765, "tier": "Cat 3"}, {"client": "Meconomy", "cam": "Vikas", "clerk": "Deepak", "rate": 750, "tier": "Cat 3"}, {"client": "TrendFocus", "cam": "Shivanshi", "clerk": "Shivanshi", "rate": 658, "tier": "Cat 1"}, {"client": "At the Table, Inc", "cam": "Becca", "clerk": "Shivanshi", "rate": 650, "tier": "Cat 1"}, {"client": "Chamberlain Landscaping", "cam": "Zee", "clerk": "Zee", "rate": 600, "tier": "Cat 5"}, {"client": "LM West (same owner as Mattco)", "cam": "Mandy", "clerk": "N/A", "rate": 525, "tier": "Cat 5"}, {"client": "Moonsail Vacations (CPS Holdings)", "cam": "Vikas", "clerk": "Shivanshi", "rate": 425, "tier": "Cat 1"}, {"client": "Johnny D's Barber Shop, LLC", "cam": "Becca", "clerk": "Client", "rate": 78.75, "tier": "Cat 1"}, {"client": "Lesti (annually billed)", "cam": "Becca", "clerk": "Becca", "rate": 58.33, "tier": "Cat 1"}], "Vikas": [{"client": "MOCLC", "cam": "Vikas", "clerk": "Deepak", "rate": 3500, "tier": "Cat 5"}, {"client": "The Bartley Group", "cam": "Vikas", "clerk": "Deepak", "rate": 1712.5, "tier": "Cat 5"}, {"client": "Greater Ozarks Realty", "cam": "Vikas", "clerk": "Deepak", "rate": 1500, "tier": "Cat 5"}, {"client": "Honest Skin", "cam": "Vikas", "clerk": "Deepak", "rate": 850, "tier": "Cat 3"}, {"client": "QSW LLC", "cam": "Vikas", "clerk": "Deepak", "rate": 704, "tier": "Cat 2"}, {"client": "Trinidad Mortgage (IHeart also)", "cam": "Vikas", "clerk": "Shivanshi", "rate": 700, "tier": "Cat 4"}, {"client": "Lucky Investments", "cam": "Vikas", "clerk": "Deepak", "rate": 625, "tier": "Cat 2"}, {"client": "IHeart | Trinidad Mortgage Servicing", "cam": "Vikas", "clerk": "Shivanshi", "rate": 375, "tier": "Cat 4"}, {"client": "Kensington West Capital LLC DBA Campbell Square Apartments", "cam": "Shivanshi", "clerk": "Deepak", "rate": 276, "tier": "Cat 2"}, {"client": "Terra Firma Management Inc.", "cam": "Shivanshi", "clerk": "Deepak", "rate": 210, "tier": "Cat 1"}, {"client": "Diane Dittmar (496 Sherwood Way, LLC)", "cam": "Vikas", "clerk": "Vikas", "rate": 200, "tier": "Cat 2"}], "Michelle": [{"client": "MPI Inc", "cam": "Michelle", "clerk": "", "rate": 8000, "tier": "Cat 5"}, {"client": "Thrive Internet Marketing Agency", "cam": "", "clerk": "", "rate": 2000, "tier": "Cat 5"}, {"client": "Total Studio Transformation", "cam": "Michelle", "clerk": "-", "rate": 1608, "tier": "Cat 3"}, {"client": "Spartners", "cam": "", "clerk": "N/A", "rate": 1600, "tier": "Cat 5"}, {"client": "Peace of Mind Pest Control", "cam": "Michelle", "clerk": "", "rate": 1395, "tier": "Cat 5"}, {"client": "Yang Law", "cam": "Michelle", "clerk": "Michelle", "rate": 995, "tier": "Cat 5"}, {"client": "Alpha Omega Electric", "cam": "Michelle", "clerk": "Michelle", "rate": 800, "tier": "Cat 5"}, {"client": "Five Star Pool & Spa", "cam": "Michelle", "clerk": "Michelle", "rate": 400, "tier": "Cat 5"}, {"client": "Rotary Club of Kerrville", "cam": "", "clerk": "", "rate": 52.5, "tier": ""}, {"client": "Rotary Club of Kerrville Community Service Fund", "cam": "", "clerk": "", "rate": 52.5, "tier": ""}, {"client": "Miami City Massage", "cam": "Michelle", "clerk": "", "rate": 0, "tier": "Cat 1"}], "S+S": [{"client": "Right Way Profits (Debbie)", "cam": "S+S", "clerk": "S+S", "rate": 5500, "tier": "S+S"}, {"client": "Spire Business (Linda Brown)", "cam": "S+S", "clerk": "S+S", "rate": 2500, "tier": "S+S"}, {"client": "CFO Accounting Services, LLC (Carla)", "cam": "S+S", "clerk": "S+S", "rate": 1000, "tier": "S+S"}, {"client": "A+ Solutions (Christi Junge)", "cam": "S+S", "clerk": "S+S", "rate": 0, "tier": "S+S"}, {"client": "About Profit (John Tapinis)", "cam": "S+S", "clerk": "S+S", "rate": 0, "tier": "S+S"}], "Simplified Team": [{"client": "Aria Pilates Studio LLC", "cam": "Shilpa", "clerk": "N/A", "rate": 325, "tier": "Simplified"}, {"client": "Dewalt Law LLC", "cam": "Shilpa", "clerk": "N/A", "rate": 320, "tier": "Simplified"}, {"client": "Wavera Works", "cam": "Shilpa", "clerk": "N/A", "rate": 240, "tier": "Simplified"}]}, "totals": {"exp_rev": 136626.68, "act_rev": 123836.34, "exp_hrs": 2087, "act_hrs": 2151.36, "rev_per_hr_expected": 65.47, "rev_per_hr_actual": 57.56, "goal_min": 151, "goal_target": 175, "total_clients": 112, "total_people": 20, "qbo_total": 123836.34, "total_cost": 53708.19, "margin_expected": 63.7, "margin_actual": 56.6, "total_company_revenue": 123836.34, "unclaimed_income": 0.0}, "tier_labels": ["Cat 5", "Cat 4", "Cat 3", "Cat 2", "Cat 1"]};
+const MONTH_ORDER = ["July 2026","August 2026","September 2026"];
+let currentMonth = MONTH_ORDER[MONTH_ORDER.length-1];
+let DATA = MONTHS[currentMonth];
+const MONTH_BANNERS = {
+  "July 2026": '<strong>Final July numbers.</strong> Revenue, cost, margin, capacity, and Software &amp; Other Monthly Costs are all real for every silo, and Total Company Revenue is pulled independently from the whole company QuickBooks P&amp;L. Unclaimed Income is running close to $30,000 this month, worth tracking month to month as an ongoing pattern rather than a one time error.',
+  "September 2026": '<strong>Final September numbers.</strong> Shilpa now has her own silo (Daljit\'s and Shilpa\'s clients moved out of Melissa\'s). Silo revenue and costs come from the whole company QuickBooks P&amp;L split by customer, so every dollar is assigned to a silo and Unclaimed Income is $0. Use the View buttons to see one silo at a time.',
+  "August 2026": '<strong>Final August numbers.</strong> Revenue, cost, margin, capacity, and Software &amp; Other Monthly Costs are all real for every silo, and Total Company Revenue is pulled independently from the whole company QuickBooks P&amp;L. Click any silo, a card, a bar, a row, to see who\'s in it.'
+};
+
+const SILO_COLOR = {
+  'Melissa': 'var(--series-1)', 'Liz': 'var(--series-2)', 'Becca': 'var(--series-3)',
+  'Vikas': 'var(--series-4)', 'Michelle': 'var(--series-5)', 'S+S': 'var(--series-6)',
+  'Simplified Team': 'var(--series-7)', 'Shilpa': 'var(--series-8)'
+};
+const SILO_COLOR_HEX = {
+  'Melissa': '#2a78d6', 'Liz': '#eb6834', 'Becca': '#1baf7a', 'Vikas': '#eda100',
+  'Michelle': '#e87ba4', 'S+S': '#008300', 'Simplified Team': '#4a3aa7', 'Shilpa': '#0e8f99'
+};
+const SILO_ORDER = ['Melissa','Shilpa','Liz','Becca','Vikas','Michelle','S+S','Simplified Team'];
+const LCAMS = ['Melissa','Shilpa','Liz','Becca','Vikas','Michelle'];
+const VIEW_SILOS = LCAMS.concat(['S+S','Simplified Team']);
+let currentView = 'All SOAN';
+let SILO_BY_NAME = {};
+
+function fmtMoney(v) { return '$' + Math.round(v).toLocaleString('en-US'); }
+function fmtHrs(v) { return v.toLocaleString('en-US', {maximumFractionDigits:1}) + ' hrs'; }
+function el(tag, attrs, children) {
+  const svgTags = ['svg','rect','line','text','g','circle','path','tspan'];
+  const e = svgTags.includes(tag) ? document.createElementNS('http://www.w3.org/2000/svg', tag) : document.createElement(tag);
+  for (const k in (attrs||{})) e.setAttribute(k, attrs[k]);
+  (children||[]).forEach(c => e.appendChild(c));
+  return e;
+}
+function htmlNode(tag, cls, text) {
+  const d = document.createElement(tag);
+  if (cls) d.className = cls;
+  if (text != null) d.textContent = text;
+  return d;
+}
+
+/* ---------------- icons ---------------- */
+const ICONS = {
+  grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.3"/><rect x="14" y="3" width="7" height="7" rx="1.3"/><rect x="3" y="14" width="7" height="7" rx="1.3"/><rect x="14" y="14" width="7" height="7" rx="1.3"/></svg>',
+  kpi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-9"/><path d="M14 7h6v6"/></svg>',
+  rev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c0-1.4-1.3-2-3-2s-3 .8-3 2 1.3 1.8 3 2 3 .7 3 2.1-1.3 2.4-3 2.4-3-.7-3-2.1"/></svg>',
+  hrs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  tier: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>',
+  staff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 19c0-3.4 2.9-6 6.5-6s6.5 2.6 6.5 6"/><circle cx="17.5" cy="8.5" r="2.6"/><path d="M16 13.2c2.6.4 4.5 2.4 4.5 5"/></svg>',
+  cost: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="13" rx="2"/><path d="M2.5 10h19"/><circle cx="16.5" cy="14" r="1.6"/></svg>'
+};
+function mountIcons() {
+  Object.keys(ICONS).forEach(k => {
+    const target = document.getElementById('icon-' + k);
+    if (target) target.innerHTML = ICONS[k];
+  });
+}
+
+const tooltip = document.getElementById('tooltip');
+function showTooltip(evt, rowsHtml) {
+  tooltip.innerHTML = '';
+  rowsHtml.forEach(r => {
+    const row = htmlNode('div', 't-row');
+    row.appendChild(htmlNode('span', null, r.label));
+    row.appendChild(htmlNode('span', 't-value', r.value));
+    tooltip.appendChild(row);
+  });
+  tooltip.classList.add('show');
+  positionTooltip(evt);
+}
+function positionTooltip(evt) {
+  tooltip.style.left = Math.min(evt.clientX + 14, window.innerWidth - 250) + 'px';
+  tooltip.style.top = (evt.clientY + 14) + 'px';
+}
+function hideTooltip() { tooltip.classList.remove('show'); }
+document.addEventListener('pointermove', positionTooltip);
+
+/* ---------------- drill-down panel ---------------- */
+const backdrop = document.getElementById('backdrop');
+const panel = document.getElementById('panel');
+function closePanel() { backdrop.classList.remove('open'); panel.classList.remove('open'); }
+document.getElementById('panelClose').addEventListener('click', closePanel);
+backdrop.addEventListener('click', closePanel);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+function openSiloPanel(siloName) {
+  const s = SILO_BY_NAME[siloName];
+  const team = DATA.silo_team[siloName] || [];
+  const clients = DATA.silo_clients[siloName] || [];
+
+  document.getElementById('panelTitle').innerHTML =
+    '<span class="dot" style="background:' + SILO_COLOR_HEX[siloName] + '"></span>' + siloName;
+  document.getElementById('panelSub').textContent = s.role + ' silo';
+
+  const body = document.getElementById('panelBody');
+  body.innerHTML = '';
+
+  const stats = htmlNode('div', 'panel-stats');
+  stats.style.gridTemplateColumns = 'repeat(3,1fr)';
+  const pct = s.exp_hrs > 0 ? Math.round((s.act_hrs / s.exp_hrs) * 100) : null;
+  const revPct = s.exp_rev > 0 ? Math.round((s.act_rev / s.exp_rev) * 100) : null;
+  [
+    ['Actual revenue', fmtMoney(s.act_rev) + (revPct!=null ? ' (' + revPct + '%)' : '')],
+    ['Expected revenue', fmtMoney(s.exp_rev)],
+    ['Billable hrs', s.act_hrs + (pct!=null ? ' (' + pct + '%)' : '')],
+    ['Clients', clients.length.toString()],
+    ['Monthly cost', fmtMoney(s.cost)],
+    ['Profit margin (actual)', s.margin_actual != null ? s.margin_actual + '%' : 'n/a'],
+  ].forEach(([l,v]) => {
+    const c = htmlNode('div', 'pstat');
+    c.appendChild(htmlNode('div', 'l', l));
+    c.appendChild(htmlNode('div', 'v', v));
+    stats.appendChild(c);
+  });
+  body.appendChild(stats);
+
+  body.appendChild(htmlNode('div', 'panel-section-title', 'Team (' + team.filter(t=>t.pct>0).length + ')'));
+  const teamTable = document.createElement('table');
+  teamTable.className = 'data-table';
+  const th = document.createElement('thead');
+  const htr = document.createElement('tr');
+  ['Person','% here','Capacity','Actual hrs'].forEach((h,i) => htr.appendChild(htmlNode('th', i>0?'num':null, h)));
+  th.appendChild(htr); teamTable.appendChild(th);
+  const tb = document.createElement('tbody');
+  team.filter(t => t.pct > 0).sort((a,b)=>b.pct-a.pct).forEach(t => {
+    const tr = document.createElement('tr');
+    tr.appendChild(htmlNode('td', null, t.name));
+    tr.appendChild(htmlNode('td', 'num', t.pct + '%'));
+    tr.appendChild(htmlNode('td', 'num', t.capacity ? t.capacity.toString() : '-'));
+    tr.appendChild(htmlNode('td', 'num', t.actual!=null ? (Math.round(t.actual*10)/10).toString() : '-'));
+    tb.appendChild(tr);
+  });
+  teamTable.appendChild(tb);
+  body.appendChild(teamTable);
+
+  body.appendChild(htmlNode('div', 'panel-section-title', 'Clients (' + clients.length + ')'));
+  const cTable = document.createElement('table');
+  cTable.className = 'data-table';
+  const cth = document.createElement('thead');
+  const chtr = document.createElement('tr');
+  ['Client','CAM','Clerk','Rate'].forEach((h,i) => chtr.appendChild(htmlNode('th', i===3?'num':null, h)));
+  cth.appendChild(chtr); cTable.appendChild(cth);
+  const ctb = document.createElement('tbody');
+  clients.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.appendChild(htmlNode('td', null, c.client));
+    tr.appendChild(htmlNode('td', null, c.cam || '-'));
+    tr.appendChild(htmlNode('td', null, c.clerk || '-'));
+    tr.appendChild(htmlNode('td', 'num', fmtMoney(c.rate)));
+    ctb.appendChild(tr);
+  });
+  cTable.appendChild(ctb);
+  body.appendChild(cTable);
+
+  backdrop.classList.add('open');
+  panel.classList.add('open');
+}
+
+/* ---------------- radial gauge (meter) ---------------- */
+function radialGauge(pct, size) {
+  size = size || 56;
+  const r = size/2 - 5;
+  const cx = size/2, cy = size/2;
+  const circumference = 2 * Math.PI * r;
+  const capped = Math.max(0, Math.min(pct, 150));
+  const frac = Math.min(capped / 100, 1.25) / 1.25; // visual scale so 100% isn't full circle, 125%+ approaches full
+  const fillColor = pct > 100 ? 'var(--status-warning)' : 'var(--seq-500)';
+  const svg = el('svg', {viewBox: '0 0 ' + size + ' ' + size, width: size, height: size});
+  svg.appendChild(el('circle', {cx, cy, r, fill:'none', stroke:'var(--seq-100)', 'stroke-width':5}));
+  const dash = frac * circumference;
+  const arc = el('circle', {cx, cy, r, fill:'none', stroke: fillColor, 'stroke-width':5,
+    'stroke-dasharray': dash + ' ' + (circumference-dash), 'stroke-linecap':'round',
+    transform: 'rotate(-90 ' + cx + ' ' + cy + ')'});
+  svg.appendChild(arc);
+  const label = el('text', {x:cx, y:cy+4, 'text-anchor':'middle', class:'cat-label', style:'font-weight:650;font-size:12px;'},
+    [document.createTextNode(Math.round(pct) + '%')]);
+  svg.appendChild(label);
+  return svg;
+}
+
+/* ---------------- silo overview cards ---------------- */
+function buildOverview() {
+  const grid = document.getElementById('overviewGrid');
+  grid.innerHTML = '';
+  DATA.silos.forEach(s => {
+    const card = htmlNode('div', 'silo-card');
+    card.tabIndex = 0;
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label', 'View ' + s.name + ' silo detail');
+    const nameRow = htmlNode('div', 'name');
+    const dot = htmlNode('span', 'dot'); dot.style.background = SILO_COLOR_HEX[s.name];
+    nameRow.appendChild(dot); nameRow.appendChild(document.createTextNode(s.name));
+    card.appendChild(nameRow);
+    card.appendChild(htmlNode('div', 'role', s.role));
+    const gaugeRow = htmlNode('div', 'gauge-row');
+    const pct = s.exp_hrs > 0 ? (s.act_hrs / s.exp_hrs) * 100 : (s.act_hrs > 0 ? 100 : 0);
+    gaugeRow.appendChild(radialGauge(pct, 52));
+    const gtext = htmlNode('div');
+    gtext.style.fontSize = '11px'; gtext.style.color = 'var(--text-muted)';
+    gtext.innerHTML = 'billable<br>hrs';
+    gaugeRow.appendChild(gtext);
+    card.appendChild(gaugeRow);
+    const rev = htmlNode('div', 'rev');
+    rev.innerHTML = '<b>' + fmtMoney(s.act_rev) + '</b> actual';
+    card.appendChild(rev);
+    const revExp = htmlNode('div', 'rev');
+    revExp.style.marginTop = '1px';
+    revExp.style.color = 'var(--text-muted)';
+    revExp.textContent = fmtMoney(s.exp_rev) + ' expected';
+    card.appendChild(revExp);
+    const marginRow = htmlNode('div', 'rev');
+    marginRow.style.marginTop = '6px';
+    if (s.margin_actual != null) {
+      if (s.margin_actual < 0) {
+        marginRow.appendChild(htmlNode('span', 'pill warn', s.margin_actual + '% margin'));
+      } else {
+        const ms = htmlNode('span'); ms.style.color = 'var(--text-muted)';
+        ms.textContent = s.margin_actual + '% margin';
+        marginRow.appendChild(ms);
+      }
+    }
+    card.appendChild(marginRow);
+    card.addEventListener('click', () => openSiloPanel(s.name));
+    card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openSiloPanel(s.name); } });
+    grid.appendChild(card);
+  });
+}
+
+/* ---------------- KPI tiles ---------------- */
+function buildKpiRow() {
+  const row = document.getElementById('kpiRow');
+  row.innerHTML = '';
+  const t = DATA.totals;
+
+  const pctRev = Math.round((t.act_rev / t.exp_rev) * 100);
+  const tile1 = htmlNode('div', 'tile');
+  tile1.appendChild(htmlNode('div', 'label', 'Actual revenue claimed by silos'));
+  tile1.appendChild(htmlNode('div', 'value', fmtMoney(t.act_rev)));
+  tile1.appendChild(htmlNode('div', 'delta ' + (pctRev >= 100 ? 'good' : 'muted'), pctRev + '% of ' + fmtMoney(t.exp_rev) + ' expected'));
+  row.appendChild(tile1);
+
+  const pctHrs = Math.round((t.act_hrs / t.exp_hrs) * 100);
+  const tile2 = htmlNode('div', 'tile');
+  tile2.appendChild(htmlNode('div', 'label', 'Billable hours, actual vs. expected'));
+  tile2.appendChild(htmlNode('div', 'value', fmtHrs(t.act_hrs)));
+  tile2.appendChild(htmlNode('div', 'delta ' + (pctHrs >= 100 ? 'good' : 'muted'), pctHrs + '% of ' + fmtHrs(t.exp_hrs) + ' expected'));
+  row.appendChild(tile2);
+
+  const tile3 = htmlNode('div', 'tile');
+  tile3.appendChild(htmlNode('div', 'label', 'Revenue per hour (actual)'));
+  tile3.appendChild(htmlNode('div', 'value', '$' + t.rev_per_hr_actual.toFixed(0)));
+  const track = htmlNode('div', 'meter-track');
+  const pct = Math.min(100, (t.rev_per_hr_actual / t.goal_target) * 100);
+  const fill = htmlNode('div', 'meter-fill'); fill.style.width = pct + '%';
+  track.appendChild(fill); tile3.appendChild(track);
+  const marks = htmlNode('div', 'meter-marks');
+  const markMin = htmlNode('span', null, '$' + t.goal_min + ' min'); markMin.style.left = ((t.goal_min / t.goal_target) * 100) + '%';
+  const markTarget = htmlNode('span', null, '$' + t.goal_target + ' target'); markTarget.style.left = '100%';
+  marks.appendChild(markMin); marks.appendChild(markTarget);
+  tile3.appendChild(marks);
+  row.appendChild(tile3);
+
+  const tile4 = htmlNode('div', 'tile');
+  tile4.appendChild(htmlNode('div', 'label', 'Active clients / people'));
+  tile4.appendChild(htmlNode('div', 'value', t.total_clients + ' / ' + t.total_people));
+  tile4.appendChild(htmlNode('div', 'delta muted', 'clients on the ' + currentMonth.split(' ')[0] + ' list, people on the roster'));
+  row.appendChild(tile4);
+}
+
+/* ---------------- Cost, margin & unclaimed income ---------------- */
+function buildCostRow() {
+  const row = document.getElementById('costRow');
+  row.innerHTML = '';
+  const t = DATA.totals;
+
+  const tile3 = htmlNode('div', 'tile');
+  tile3.appendChild(htmlNode('div', 'label', 'Total company revenue (QBO P&L)'));
+  tile3.appendChild(htmlNode('div', 'value', fmtMoney(t.total_company_revenue)));
+  tile3.appendChild(htmlNode('div', 'delta muted', 'whole company, independent of silo pulls'));
+  row.appendChild(tile3);
+
+  const tile1 = htmlNode('div', 'tile');
+  tile1.appendChild(htmlNode('div', 'label', 'Total department cost (all silos)'));
+  tile1.appendChild(htmlNode('div', 'value', fmtMoney(t.total_cost)));
+  tile1.appendChild(htmlNode('div', 'delta muted', currentMonth.split(' ')[0] + ' payroll, all silos combined'));
+  row.appendChild(tile1);
+
+  const tile2 = htmlNode('div', 'tile');
+  tile2.appendChild(htmlNode('div', 'label', 'Company profit margin (actual)'));
+  tile2.appendChild(htmlNode('div', 'value', t.margin_actual + '%'));
+  tile2.appendChild(htmlNode('div', 'delta ' + (t.margin_actual >= t.margin_expected ? 'good' : 'muted'), t.margin_expected + '% expected'));
+  row.appendChild(tile2);
+
+  const tile4 = htmlNode('div', 'tile');
+  tile4.appendChild(htmlNode('div', 'label', 'Unclaimed income'));
+  tile4.appendChild(htmlNode('div', 'value', fmtMoney(t.unclaimed_income)));
+  const uDelta = htmlNode('div', 'delta ' + (t.unclaimed_income > 0 ? 'warn' : 'good'),
+    t.unclaimed_income > 0
+      ? 'on the books, not yet claimed by a silo'
+      : 'fully claimed by silos');
+  tile4.appendChild(uDelta);
+  row.appendChild(tile4);
+}
+
+/* ---------------- Revenue by silo ---------------- */
+function buildRevenueChart() {
+  const container = document.getElementById('revenueChart');
+  const rows = DATA.silos.slice().sort((a,b) => b.act_rev - a.act_rev);
+  const max = Math.max(...rows.map(r => Math.max(r.act_rev, r.exp_rev))) * 1.06;
+  const W = 900, rowH = 34, gap = 10, leftPad = 130, rightPad = 70, topPad = 10;
+  const H = rows.length * (rowH + gap) + topPad;
+  const svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H, role:'img', 'aria-label':'Actual revenue by silo, vs. expected'});
+  [0,0.25,0.5,0.75,1].forEach(f => { const x = leftPad + f*(W-leftPad-rightPad); svg.appendChild(el('line', {x1:x,x2:x,y1:0,y2:H-18, class:'grid-line'})); });
+
+  rows.forEach((r, i) => {
+    const y = topPad + i*(rowH+gap);
+    const scale = (v) => (v/max)*(W-leftPad-rightPad);
+    const barW = scale(r.act_rev);
+    const tickX = leftPad + scale(r.exp_rev);
+    const g = el('g', {});
+    g.appendChild(el('text', {x: leftPad-10, y: y+rowH/2+4, 'text-anchor':'end', class:'cat-label'}, [document.createTextNode(r.name)]));
+    const rect = el('rect', {x: leftPad, y: y+3, width: Math.max(barW,2), height: rowH-6, rx:4, fill: SILO_COLOR[r.name], class:'bar-rect'});
+    const pct = r.exp_rev > 0 ? Math.round((r.act_rev/r.exp_rev)*100) : null;
+    rect.setAttribute('tabindex','0');
+    rect.addEventListener('pointermove', (e) => showTooltip(e, [
+      {label:'Silo', value:r.name}, {label:'Actual revenue', value: fmtMoney(r.act_rev)},
+      {label:'Expected revenue', value: fmtMoney(r.exp_rev)}, {label:'% of expected', value: pct==null?'-':pct+'%'}
+    ]));
+    rect.addEventListener('pointerleave', hideTooltip);
+    rect.addEventListener('click', () => openSiloPanel(r.name));
+    rect.addEventListener('keydown', (e) => { if (e.key==='Enter') openSiloPanel(r.name); });
+    g.appendChild(rect);
+    g.appendChild(el('line', {x1:tickX, x2:tickX, y1:y-1, y2:y+rowH-1, class:'target-tick'}));
+    g.appendChild(el('text', {x: leftPad+Math.max(barW,scale(r.exp_rev))+8, y: y+rowH/2+4, class:'bar-label'}, [document.createTextNode(fmtMoney(r.act_rev))]));
+    svg.appendChild(g);
+  });
+  container.innerHTML = ''; container.appendChild(svg);
+  Array.from(container.parentElement.querySelectorAll('.legend, [id$="-table"]')).forEach(n => n.remove());
+
+  const legend = htmlNode('div', 'legend');
+  const k1 = htmlNode('span','key'); const sw1 = htmlNode('span','swatch'); sw1.style.background='var(--text-secondary)';
+  k1.appendChild(sw1); k1.appendChild(document.createTextNode(' bar = actual P&L revenue'));
+  const k2 = htmlNode('span','key'); const sw2 = htmlNode('span','swatch'); sw2.style.background='var(--text-primary)'; sw2.style.width='10px'; sw2.style.height='2px'; sw2.style.borderRadius='0';
+  k2.appendChild(sw2); k2.appendChild(document.createTextNode(' tick = expected revenue'));
+  legend.appendChild(k1); legend.appendChild(k2);
+  container.parentElement.insertBefore(legend, container);
+
+  const tableWrap = buildTable(['Silo','Actual revenue','Expected revenue','% of expected'],
+    rows.map(r => [r.name, fmtMoney(r.act_rev), fmtMoney(r.exp_rev), r.exp_rev>0?Math.round((r.act_rev/r.exp_rev)*100)+'%':'-']), rows.map(r=>r.name));
+  tableWrap.id = 'revenueChart-table'; tableWrap.classList.add('hidden');
+  container.parentElement.appendChild(tableWrap);
+}
+
+/* ---------------- Hours: actual bar + expected tick ---------------- */
+function buildHoursChart() {
+  const container = document.getElementById('hoursChart');
+  const rows = DATA.silos.filter(r => r.exp_hrs > 0 || r.act_hrs > 0);
+  const max = Math.max(...rows.map(r => Math.max(r.exp_hrs, r.act_hrs))) * 1.08;
+  const W = 900, rowH = 34, gap = 10, leftPad = 130, rightPad = 70, topPad = 10;
+  const H = rows.length * (rowH+gap) + topPad;
+  const svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, width:'100%', height:H});
+  [0,0.25,0.5,0.75,1].forEach(f => { const x = leftPad + f*(W-leftPad-rightPad); svg.appendChild(el('line', {x1:x,x2:x,y1:0,y2:H-18, class:'grid-line'})); });
+
+  rows.forEach((r,i) => {
+    const y = topPad + i*(rowH+gap);
+    const scale = (v) => (v/max)*(W-leftPad-rightPad);
+    const barW = scale(r.act_hrs);
+    const tickX = leftPad + scale(r.exp_hrs);
+    const g = el('g', {});
+    g.appendChild(el('text', {x: leftPad-10, y: y+rowH/2+4, 'text-anchor':'end', class:'cat-label'}, [document.createTextNode(r.name)]));
+    const rect = el('rect', {x: leftPad, y: y+3, width: Math.max(barW,2), height: rowH-6, rx:4, fill: SILO_COLOR[r.name], class:'bar-rect'});
+    const pct = r.exp_hrs > 0 ? Math.round((r.act_hrs/r.exp_hrs)*100) : null;
+    rect.setAttribute('tabindex','0');
+    rect.addEventListener('pointermove', (e) => showTooltip(e, [
+      {label:'Silo', value:r.name}, {label:'Actual hours', value: fmtHrs(r.act_hrs)},
+      {label:'Expected hours', value: fmtHrs(r.exp_hrs)}, {label:'% of expected', value: pct==null?'-':pct+'%'}
+    ]));
+    rect.addEventListener('pointerleave', hideTooltip);
+    rect.addEventListener('click', () => openSiloPanel(r.name));
+    g.appendChild(rect);
+    g.appendChild(el('line', {x1:tickX, x2:tickX, y1:y-1, y2:y+rowH-1, class:'target-tick'}));
+    g.appendChild(el('text', {x: leftPad+Math.max(barW,scale(r.exp_hrs))+8, y: y+rowH/2+4, class:'bar-label'}, [document.createTextNode(fmtHrs(r.act_hrs))]));
+    svg.appendChild(g);
+  });
+  container.innerHTML=''; container.appendChild(svg);
+  Array.from(container.parentElement.querySelectorAll('.legend, [id$="-table"]')).forEach(n => n.remove());
+
+  const legend = htmlNode('div', 'legend');
+  const k1 = htmlNode('span','key'); const sw1 = htmlNode('span','swatch'); sw1.style.background='var(--text-secondary)';
+  k1.appendChild(sw1); k1.appendChild(document.createTextNode(' bar = actual hours logged'));
+  const k2 = htmlNode('span','key'); const sw2 = htmlNode('span','swatch'); sw2.style.background='var(--text-primary)'; sw2.style.width='10px'; sw2.style.height='2px'; sw2.style.borderRadius='0';
+  k2.appendChild(sw2); k2.appendChild(document.createTextNode(' tick = expected hours'));
+  legend.appendChild(k1); legend.appendChild(k2);
+  container.parentElement.insertBefore(legend, container);
+
+  const tableWrap = buildTable(['Silo','Actual hours','Expected hours','% of expected'],
+    rows.map(r => [r.name, fmtHrs(r.act_hrs), fmtHrs(r.exp_hrs), r.exp_hrs>0?Math.round((r.act_hrs/r.exp_hrs)*100)+'%':'-']), rows.map(r=>r.name));
+  tableWrap.id = 'hoursChart-table'; tableWrap.classList.add('hidden');
+  container.parentElement.appendChild(tableWrap);
+}
+
+/* ---------------- Tier mix: stacked bar, ordinal ramp ---------------- */
+function buildTierChart() {
+  const container = document.getElementById('tierChart');
+  const rows = DATA.silos.filter(r => LCAMS.includes(r.name));
+  const rampSteps = ['#0d366b','#1c5cab','#3987e5','#6da7ec','#9ec5f4'];
+  const totals = rows.map(r => r.tiers.reduce((a,b)=>a+b,0));
+  const max = Math.max(...totals) * 1.05;
+  const W = 900, rowH = 34, gap = 10, leftPad = 130, rightPad = 20, topPad = 10;
+  const H = rows.length*(rowH+gap) + topPad;
+  const svg = el('svg', {viewBox:'0 0 '+W+' '+H, width:'100%', height:H});
+  [0,0.25,0.5,0.75,1].forEach(f => { const x = leftPad + f*(W-leftPad-rightPad); svg.appendChild(el('line', {x1:x,x2:x,y1:0,y2:H-18, class:'grid-line'})); });
+
+  rows.forEach((r,i) => {
+    const y = topPad + i*(rowH+gap);
+    const scale = (v) => (v/max)*(W-leftPad-rightPad);
+    const g = el('g', {});
+    g.appendChild(el('text', {x: leftPad-10, y: y+rowH/2+4, 'text-anchor':'end', class:'cat-label'}, [document.createTextNode(r.name)]));
+    let x = leftPad;
+    r.tiers.forEach((amt, ti) => {
+      const w = scale(amt);
+      if (w <= 0) return;
+      const rect = el('rect', {x:x, y:y+3, width: Math.max(w-2,0), height: rowH-6, fill: rampSteps[ti], class:'bar-rect'});
+      rect.setAttribute('tabindex','0');
+      rect.addEventListener('pointermove', (e) => showTooltip(e, [{label:'Silo', value:r.name}, {label: DATA.tier_labels[ti], value: fmtMoney(amt)}]));
+      rect.addEventListener('pointerleave', hideTooltip);
+      rect.addEventListener('click', () => openSiloPanel(r.name));
+      g.appendChild(rect);
+      x += w;
+    });
+    svg.appendChild(g);
+  });
+  container.innerHTML=''; container.appendChild(svg);
+  Array.from(container.parentElement.querySelectorAll('.legend, [id$="-table"]')).forEach(n => n.remove());
+
+  const legend = htmlNode('div', 'legend');
+  DATA.tier_labels.forEach((lbl,i) => {
+    const k = htmlNode('span','key'); const sw = htmlNode('span','swatch'); sw.style.background = rampSteps[i];
+    k.appendChild(sw); k.appendChild(document.createTextNode(lbl)); legend.appendChild(k);
+  });
+  container.parentElement.insertBefore(legend, container);
+
+  const header = ['Silo'].concat(DATA.tier_labels);
+  const body = rows.map(r => [r.name].concat(r.tiers.map(fmtMoney)));
+  const tableWrap = buildTable(header, body, rows.map(r=>r.name));
+  tableWrap.id = 'tierChart-table'; tableWrap.classList.add('hidden');
+  container.parentElement.appendChild(tableWrap);
+}
+
+/* ---------------- Staffing table ---------------- */
+function buildStaffingTable() {
+  const container = document.getElementById('staffingTable');
+  const rows = DATA.employees.slice().sort((a,b) => {
+    const pa = a.capacity ? a.actual/a.capacity : -1;
+    const pb = b.capacity ? b.actual/b.capacity : -1;
+    return pb - pa;
+  });
+  const table = document.createElement('table');
+  table.className = 'data-table';
+  const thead = document.createElement('thead');
+  const htr = document.createElement('tr');
+  ['Person','Silo(s)','Capacity (hrs)','Actual hrs','Utilization'].forEach((h,i) => htr.appendChild(htmlNode('th', i>=2?'num':null, h)));
+  thead.appendChild(htr); table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.className = 'clickable-row';
+    tr.tabIndex = 0;
+    tr.appendChild(htmlNode('td', null, r.name));
+    tr.appendChild(htmlNode('td', null, r.silos.join(', ')));
+    tr.appendChild(htmlNode('td', 'num', r.capacity ? r.capacity.toString() : '-'));
+    tr.appendChild(htmlNode('td', 'num', r.actual != null ? r.actual.toString() : 'not tracked'));
+    const utilTd = document.createElement('td');
+    if (!r.capacity) {
+      utilTd.appendChild(htmlNode('span', 'pill pending', 'no capacity set'));
+    } else if (r.actual === 0 || r.actual == null) {
+      utilTd.appendChild(htmlNode('span', 'pill pending', r.actual == null ? 'hours not tracked' : 'no hours logged yet'));
+    } else {
+      const pct = Math.round((r.actual/r.capacity)*100);
+      const wrap = htmlNode('div', 'mini-meter');
+      const track = htmlNode('div', 'track'); const fill = htmlNode('div', 'fill');
+      fill.style.width = Math.min(pct,100)+'%'; fill.style.background = pct>100 ? 'var(--status-warning)' : 'var(--seq-500)';
+      track.appendChild(fill); wrap.appendChild(track);
+      const lbl = htmlNode('span', null, pct+'%'); lbl.style.fontVariantNumeric='tabular-nums'; lbl.style.minWidth='38px';
+      wrap.appendChild(lbl);
+      if (pct > 130) wrap.appendChild(htmlNode('span', 'pill warn', 'over capacity'));
+      utilTd.appendChild(wrap);
+    }
+    tr.appendChild(utilTd);
+    tr.addEventListener('click', () => openPersonPanel(r));
+    tr.addEventListener('keydown', (e) => { if (e.key==='Enter') openPersonPanel(r); });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  container.innerHTML=''; container.appendChild(table);
+}
+
+function openPersonPanel(person) {
+  document.getElementById('panelTitle').textContent = person.name;
+  document.getElementById('panelSub').textContent = 'Split across ' + person.silos.length + ' silo' + (person.silos.length>1?'s':'');
+  const body = document.getElementById('panelBody');
+  body.innerHTML = '';
+  const stats = htmlNode('div', 'panel-stats');
+  [['Capacity', person.capacity ? person.capacity+' hrs' : 'not set'],
+   ['Actual hrs', person.actual != null ? person.actual+' hrs' : 'not tracked'],
+   ['Silos', person.silos.length.toString()]].forEach(([l,v]) => {
+    const c = htmlNode('div','pstat'); c.appendChild(htmlNode('div','l',l)); c.appendChild(htmlNode('div','v',v)); stats.appendChild(c);
+  });
+  body.appendChild(stats);
+  body.appendChild(htmlNode('div', 'panel-section-title', 'Silo split'));
+  const table = document.createElement('table');
+  table.className = 'data-table';
+  const th = document.createElement('thead'); const htr = document.createElement('tr');
+  ['Silo','% allocated'].forEach((h,i) => htr.appendChild(htmlNode('th', i>0?'num':null, h)));
+  th.appendChild(htr); table.appendChild(th);
+  const tb = document.createElement('tbody');
+  person.silos.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.appendChild(htmlNode('td', null, s));
+    tr.appendChild(htmlNode('td', 'num', (person.pct[s]||0)+'%'));
+    tb.appendChild(tr);
+  });
+  table.appendChild(tb);
+  body.appendChild(table);
+  backdrop.classList.add('open'); panel.classList.add('open');
+}
+
+/* ---------------- shared table builder ---------------- */
+function buildTable(headers, bodyRows, clickTargets) {
+  const wrap = document.createElement('div');
+  const table = document.createElement('table');
+  table.className = 'data-table';
+  const thead = document.createElement('thead');
+  const htr = document.createElement('tr');
+  headers.forEach((h,i) => htr.appendChild(htmlNode('th', i>0?'num':null, h)));
+  thead.appendChild(htr); table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  bodyRows.forEach((row,ri) => {
+    const tr = document.createElement('tr');
+    if (clickTargets) { tr.classList.add('clickable-row'); tr.addEventListener('click', () => openSiloPanel(clickTargets[ri])); }
+    row.forEach((cell,i) => tr.appendChild(htmlNode('td', i>0?'num':null, cell)));
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  return wrap;
+}
+
+function wireTableToggles() {
+  document.querySelectorAll('.table-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      const tableEl = document.getElementById(btn.dataset.target + '-table');
+      const showingTable = !tableEl.classList.contains('hidden');
+      if (showingTable) { tableEl.classList.add('hidden'); target.classList.remove('hidden'); btn.textContent = 'View as table'; }
+      else { tableEl.classList.remove('hidden'); target.classList.add('hidden'); btn.textContent = 'View as chart'; }
+    });
+  });
+}
+
+function wireThemeToggle() {
+  const btn = document.getElementById('themeToggle');
+  if (document.documentElement.getAttribute('data-theme') === 'dark') btn.textContent = 'Light mode';
+  btn.addEventListener('click', () => {
+    const root = document.documentElement;
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    if (isDark) { root.removeAttribute('data-theme'); btn.textContent = 'Dark mode'; }
+    else { root.setAttribute('data-theme', 'dark'); btn.textContent = 'Light mode'; }
+  });
+}
+
+function renderAll() {
+  SILO_BY_NAME = {};
+  DATA.silos.forEach(s => SILO_BY_NAME[s.name] = s);
+  document.title = 'SOAN KPI Dashboard - ' + currentMonth;
+  const titleEl = document.getElementById('dashTitle');
+  if (titleEl) titleEl.textContent = 'SOAN Monthly KPI Dashboard - ' + currentMonth;
+  const bannerEl = document.getElementById('infoBanner');
+  if (bannerEl) bannerEl.innerHTML = MONTH_BANNERS[currentMonth] || ('<strong>' + currentMonth + ' numbers.</strong>');
+  const footerEl = document.getElementById('dashFooter');
+  if (footerEl) footerEl.textContent = 'Built from the SOAN KPI Tracker workbook, ' + currentMonth;
+  document.querySelectorAll('.mname').forEach(n => n.textContent = currentMonth.split(' ')[0]);
+  const sc = document.getElementById('siloCount'); if (sc) sc.textContent = DATA.silos.length;
+  if (currentView !== 'All SOAN' && !SILO_BY_NAME[currentView]) currentView = 'All SOAN';
+  buildViewTabs();
+  mountIcons();
+  const soan = document.getElementById('soanView'), lv = document.getElementById('lcamView');
+  if (currentView === 'All SOAN') {
+    soan.classList.remove('hidden'); lv.classList.add('hidden'); lv.innerHTML = '';
+    buildOverview();
+    buildKpiRow();
+    buildCostRow();
+    buildRevenueChart();
+    buildHoursChart();
+    buildTierChart();
+    buildStaffingTable();
+  } else {
+    soan.classList.add('hidden'); lv.classList.remove('hidden');
+    renderLcam(currentView);
+  }
+}
+
+function buildViewTabs() {
+  const wrap = document.getElementById('viewTabs');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  wrap.appendChild(htmlNode('span', 'vlabel', 'View:'));
+  ['All SOAN'].concat(VIEW_SILOS).forEach(v => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    const available = v === 'All SOAN' || !!SILO_BY_NAME[v];
+    btn.className = 'view-tab' + (v === currentView ? ' active' : '') + (available ? '' : ' disabled');
+    if (v !== 'All SOAN') { const d = htmlNode('span', 'vdot'); d.style.background = SILO_COLOR_HEX[v]; btn.appendChild(d); }
+    btn.appendChild(document.createTextNode(v));
+    if (!available) { btn.title = v + ' did not have a silo in ' + currentMonth; btn.disabled = true; }
+    btn.addEventListener('click', () => {
+      if (!available || v === currentView) return;
+      currentView = v; closePanel(); hideTooltip(); renderAll(); window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function fmtPct(v) { return (v == null || v === '') ? 'n/a' : (Math.round(v * 10) / 10) + '%'; }
+function cmpSpan(val, ref, higherIsBetter, fmt) {
+  const s = htmlNode('span', null, fmt(val));
+  if (val != null && ref != null) s.className = ((val >= ref) === higherIsBetter) ? 'cmp-good' : 'cmp-bad';
+  return s;
+}
+
+function renderLcam(name) {
+  const lv = document.getElementById('lcamView');
+  lv.innerHTML = '';
+  const s = SILO_BY_NAME[name];
+  const t = DATA.totals;
+  const team = (DATA.silo_team[name] || []).filter(p => p.pct > 0 || (p.actual || 0) > 0);
+  const clients = DATA.silo_clients[name] || [];
+  const revPerHr = s.act_hrs > 0 ? s.act_rev / s.act_hrs : null;
+  const soanRevPerHr = t.rev_per_hr_actual;
+  const revPct = s.exp_rev > 0 ? Math.round(s.act_rev / s.exp_rev * 100) : null;
+  const hrsPct = s.exp_hrs > 0 ? Math.round(s.act_hrs / s.exp_hrs * 100) : null;
+  const soanHrsPct = t.exp_hrs > 0 ? Math.round(t.act_hrs / t.exp_hrs * 100) : null;
+  const share = t.act_rev > 0 ? s.act_rev / t.act_rev * 100 : null;
+
+  const hero = htmlNode('div', 'lcam-hero');
+  const dot = htmlNode('span', 'bigdot'); dot.style.background = SILO_COLOR_HEX[name]; hero.appendChild(dot);
+  const ht = htmlNode('div'); ht.appendChild(htmlNode('h2', null, s.role === 'Team' ? name + ' silo' : name + "'s silo"));
+  ht.appendChild(htmlNode('p', null, (s.role === 'Team' ? 'Silo view for ' : 'LCAM view for ') + currentMonth + '. Green and orange compare this silo to the SOAN average.'));
+  hero.appendChild(ht); lv.appendChild(hero);
+  lv.appendChild(htmlNode('div', 'accent-bar'));
+
+  const row1 = htmlNode('div', 'kpi-row');
+  function tile(label, value, deltaText, cls) {
+    const tl = htmlNode('div', 'tile');
+    tl.appendChild(htmlNode('div', 'label', label));
+    tl.appendChild(htmlNode('div', 'value', value));
+    if (deltaText) tl.appendChild(htmlNode('div', 'delta ' + (cls || 'muted'), deltaText));
+    return tl;
+  }
+  row1.appendChild(tile('Actual revenue', fmtMoney(s.act_rev), (revPct != null ? revPct + '% of ' : '') + fmtMoney(s.exp_rev) + ' expected', revPct >= 100 ? 'good' : 'muted'));
+  row1.appendChild(tile('Billable hours', fmtHrs(s.act_hrs), (hrsPct != null ? hrsPct + '% of ' + fmtHrs(s.exp_hrs) + ' expected' : 'no expected hours set'), 'muted'));
+  row1.appendChild(tile('Profit margin (actual)', fmtPct(s.margin_actual), fmtPct(s.margin_expected) + ' expected, SOAN ' + fmtPct(t.margin_actual), (s.margin_actual != null && s.margin_actual >= t.margin_actual) ? 'good' : 'warn'));
+  const rt = tile('Revenue per hour (actual)', revPerHr != null ? '$' + revPerHr.toFixed(0) : 'n/a', 'SOAN average $' + soanRevPerHr.toFixed(0), (revPerHr != null && revPerHr >= soanRevPerHr) ? 'good' : 'warn');
+  if (revPerHr != null) {
+    const track = htmlNode('div', 'meter-track');
+    const fill = htmlNode('div', 'meter-fill'); fill.style.width = Math.min(100, revPerHr / t.goal_target * 100) + '%';
+    track.appendChild(fill); rt.appendChild(track);
+    const marks = htmlNode('div', 'meter-marks');
+    const mm = htmlNode('span', null, '$' + t.goal_min + ' min'); mm.style.left = (t.goal_min / t.goal_target * 100) + '%';
+    const mt = htmlNode('span', null, '$' + t.goal_target + ' target'); mt.style.left = '100%';
+    marks.appendChild(mm); marks.appendChild(mt); rt.appendChild(marks);
+  }
+  row1.appendChild(rt);
+  lv.appendChild(row1);
+
+  const row2 = htmlNode('div', 'kpi-row'); row2.style.marginTop = '14px';
+  row2.appendChild(tile('Monthly cost', fmtMoney(s.cost), 'payroll share plus software and hosting'));
+  row2.appendChild(tile('Clients', clients.length.toString(), fmtMoney(clients.reduce((a, c) => a + (c.rate || 0), 0)) + ' monthly billing'));
+  row2.appendChild(tile('Team', team.filter(p => p.pct > 0).length + ' people', team.length > team.filter(p => p.pct > 0).length ? 'plus ' + (team.length - team.filter(p => p.pct > 0).length) + ' who helped with hours' : 'allocated to this silo'));
+  row2.appendChild(tile('Share of SOAN revenue', share != null ? share.toFixed(1) + '%' : 'n/a', 'of ' + fmtMoney(t.act_rev) + ' claimed by all silos'));
+  lv.appendChild(row2);
+
+  // comparison card
+  const cmp = htmlNode('div', 'card'); cmp.style.marginTop = '22px';
+  const ch = htmlNode('div', 'card-head'); const chd = htmlNode('div');
+  chd.appendChild(htmlNode('h3', null, 'How ' + name + ' compares to SOAN'));
+  chd.appendChild(htmlNode('p', 'note', 'SOAN = all silos combined for ' + currentMonth));
+  ch.appendChild(chd); cmp.appendChild(ch);
+  const ct = document.createElement('table'); ct.className = 'data-table';
+  const cth = document.createElement('thead'); const ctr = document.createElement('tr');
+  ['Metric', name, 'SOAN'].forEach((x, i) => ctr.appendChild(htmlNode('th', i ? 'num' : null, x)));
+  cth.appendChild(ctr); ct.appendChild(cth);
+  const ctb = document.createElement('tbody');
+  [['Profit margin', s.margin_actual, t.margin_actual, true, fmtPct],
+   ['Revenue per hour', revPerHr, soanRevPerHr, true, v => v == null ? 'n/a' : '$' + v.toFixed(0)],
+   ['Revenue vs. expected', revPct, Math.round(t.act_rev / t.exp_rev * 100), true, v => v == null ? 'n/a' : v + '%'],
+   ['Hours vs. expected', hrsPct, soanHrsPct, true, v => v == null ? 'n/a' : v + '%']].forEach(([lab, a, b, hib, f]) => {
+    const tr = document.createElement('tr');
+    tr.appendChild(htmlNode('td', null, lab));
+    const td1 = htmlNode('td', 'num'); td1.appendChild(cmpSpan(a, b, hib, f)); tr.appendChild(td1);
+    tr.appendChild(htmlNode('td', 'num', f(b)));
+    ctb.appendChild(tr);
+  });
+  ct.appendChild(ctb); cmp.appendChild(ct); lv.appendChild(cmp);
+
+  // team card
+  const tc = htmlNode('div', 'card');
+  const tch = htmlNode('div', 'card-head'); const tchd = htmlNode('div');
+  tchd.appendChild(htmlNode('h3', null, 'Team utilization'));
+  tchd.appendChild(htmlNode('p', 'note', 'Expected hours = capacity times % allocated to this silo. Click a row for that person\'s full silo split.'));
+  tch.appendChild(tchd); tc.appendChild(tch);
+  const tt = document.createElement('table'); tt.className = 'data-table';
+  const tth = document.createElement('thead'); const ttr = document.createElement('tr');
+  ['Person', '% here', 'Expected hrs', 'Actual hrs', 'Utilization'].forEach((x, i) => ttr.appendChild(htmlNode('th', i ? 'num' : null, x)));
+  tth.appendChild(ttr); tt.appendChild(tth);
+  const ttb = document.createElement('tbody');
+  team.slice().sort((a, b) => (b.actual || 0) - (a.actual || 0)).forEach(p => {
+    const tr = document.createElement('tr'); tr.className = 'clickable-row';
+    const expH = p.capacity ? p.capacity * p.pct / 100 : 0;
+    tr.appendChild(htmlNode('td', null, p.name));
+    tr.appendChild(htmlNode('td', 'num', p.pct + '%'));
+    tr.appendChild(htmlNode('td', 'num', expH ? (Math.round(expH * 10) / 10).toString() : '-'));
+    tr.appendChild(htmlNode('td', 'num', p.actual != null ? (Math.round(p.actual * 10) / 10).toString() : '-'));
+    const ut = htmlNode('td', 'num');
+    if (expH > 0 && p.actual != null) {
+      const pct = Math.round(p.actual / expH * 100);
+      const wrap = htmlNode('div', 'mini-meter'); wrap.style.justifyContent = 'flex-end';
+      const track = htmlNode('div', 'track'); const fill = htmlNode('div', 'fill');
+      fill.style.width = Math.min(pct, 100) + '%'; fill.style.background = pct > 100 ? 'var(--status-warning)' : 'var(--seq-500)';
+      track.appendChild(fill); wrap.appendChild(track);
+      const lb = htmlNode('span', null, pct + '%'); lb.style.minWidth = '42px'; wrap.appendChild(lb);
+      ut.appendChild(wrap);
+    } else { ut.appendChild(htmlNode('span', 'pill pending', p.name === 'S+S Team' ? 'team block, hours not tracked' : (p.pct > 0 ? 'no hours logged' : 'helped, not allocated'))); }
+    tr.appendChild(ut);
+    const emp = DATA.employees.find(e => e.name === p.name);
+    if (emp) tr.addEventListener('click', () => openPersonPanel(emp));
+    ttb.appendChild(tr);
+  });
+  tt.appendChild(ttb); tc.appendChild(tt); lv.appendChild(tc);
+
+  // tier mix
+  const tierTotal = s.tiers.reduce((a, b) => a + b, 0);
+  if (tierTotal > 0) {
+    const tm = htmlNode('div', 'card');
+    const tmh = htmlNode('div', 'card-head'); const tmhd = htmlNode('div');
+    tmhd.appendChild(htmlNode('h3', null, 'Client tier mix'));
+    tmhd.appendChild(htmlNode('p', 'note', 'Monthly billing by Hurricane Level, Cat 5 = highest tier'));
+    tmh.appendChild(tmhd); tm.appendChild(tmh);
+    const ramp = ['#0d366b', '#1c5cab', '#3987e5', '#6da7ec', '#9ec5f4'];
+    const bar = htmlNode('div', 'stackbar');
+    s.tiers.forEach((amt, i) => {
+      if (amt <= 0) return;
+      const seg = htmlNode('div'); seg.style.width = (amt / tierTotal * 100) + '%'; seg.style.background = ramp[i];
+      seg.addEventListener('pointermove', e => showTooltip(e, [{label: DATA.tier_labels[i], value: fmtMoney(amt)}, {label: 'Share', value: Math.round(amt / tierTotal * 100) + '%'}]));
+      seg.addEventListener('pointerleave', hideTooltip);
+      bar.appendChild(seg);
+    });
+    tm.appendChild(bar);
+    const lg = htmlNode('div', 'legend');
+    DATA.tier_labels.forEach((lbl, i) => {
+      const k = htmlNode('span', 'key'); const sw = htmlNode('span', 'swatch'); sw.style.background = ramp[i];
+      k.appendChild(sw); k.appendChild(document.createTextNode(lbl + ' ' + fmtMoney(s.tiers[i]))); lg.appendChild(k);
+    });
+    tm.appendChild(lg); lv.appendChild(tm);
+  }
+
+  // clients
+  const cc = htmlNode('div', 'card');
+  const cch = htmlNode('div', 'card-head'); const cchd = htmlNode('div');
+  cchd.appendChild(htmlNode('h3', null, 'Clients (' + clients.length + ')'));
+  cchd.appendChild(htmlNode('p', 'note', 'Sorted by monthly rate, highest first'));
+  cch.appendChild(cchd); cc.appendChild(cch);
+  const clt = document.createElement('table'); clt.className = 'data-table';
+  const clh = document.createElement('thead'); const clr = document.createElement('tr');
+  ['Client', 'Tier', 'CAM', 'Clerk', 'Rate'].forEach((x, i) => clr.appendChild(htmlNode('th', i === 4 ? 'num' : null, x)));
+  clh.appendChild(clr); clt.appendChild(clh);
+  const clb = document.createElement('tbody');
+  clients.forEach(c => {
+    const tr = document.createElement('tr');
+    [c.client, c.tier || '-', c.cam || '-', c.clerk || '-'].forEach(v => tr.appendChild(htmlNode('td', null, v)));
+    tr.appendChild(htmlNode('td', 'num', fmtMoney(c.rate)));
+    clb.appendChild(tr);
+  });
+  clt.appendChild(clb); cc.appendChild(clt);
+  lv.appendChild(cc);
+
+  // trend
+  const tr2 = htmlNode('div', 'card');
+  const trh = htmlNode('div', 'card-head'); const trhd = htmlNode('div');
+  trhd.appendChild(htmlNode('h3', null, name + ' month by month'));
+  trhd.appendChild(htmlNode('p', 'note', 'Every finalized month, with the SOAN margin alongside'));
+  trh.appendChild(trhd); tr2.appendChild(trh);
+  tr2.appendChild(buildTable(['Month', 'Actual revenue', 'Expected revenue', 'Actual hours', 'Rev per hour', 'Margin', 'SOAN margin'],
+    MONTH_ORDER.map(m => {
+      const x = MONTHS[m].silos.find(z => z.name === name);
+      const tt2 = MONTHS[m].totals;
+      if (!x) return [m, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', tt2.margin_actual + '%'];
+      return [m, fmtMoney(x.act_rev), fmtMoney(x.exp_rev), fmtHrs(x.act_hrs), x.act_hrs > 0 ? '$' + (x.act_rev / x.act_hrs).toFixed(0) : 'n/a', fmtPct(x.margin_actual), tt2.margin_actual + '%'];
+    })));
+  lv.appendChild(tr2);
+}
+
+function buildMonthTabs() {
+  const wrap = document.getElementById('monthTabs');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  MONTH_ORDER.forEach(m => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'month-tab' + (m === currentMonth ? ' active' : '');
+    btn.textContent = m;
+    btn.dataset.month = m;
+    btn.addEventListener('click', () => {
+      if (m === currentMonth) return;
+      currentMonth = m;
+      DATA = MONTHS[currentMonth];
+      wrap.querySelectorAll('.month-tab').forEach(b => b.classList.toggle('active', b.dataset.month === currentMonth));
+      closePanel();
+      hideTooltip();
+      renderAll();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+function pctDelta(curr, prev) {
+  if (prev === null || prev === undefined || prev === 0 || curr === null || curr === undefined) return '';
+  const d = ((curr - prev) / Math.abs(prev)) * 100;
+  const sign = d >= 0 ? '+' : '';
+  return ' (' + sign + d.toFixed(0) + '%)';
+}
+
+function buildTrendsSection() {
+  // Company-wide, by month
+  const companyRows = [
+    ['Total Company Revenue (QBO)', ...MONTH_ORDER.map(m => fmtMoney(MONTHS[m].totals.total_company_revenue))],
+    ['Actual Revenue Claimed by Silos', ...MONTH_ORDER.map(m => fmtMoney(MONTHS[m].totals.act_rev))],
+    ['Unclaimed Income', ...MONTH_ORDER.map(m => fmtMoney(MONTHS[m].totals.unclaimed_income))],
+    ['Total Dept Cost', ...MONTH_ORDER.map(m => fmtMoney(MONTHS[m].totals.total_cost))],
+    ['Company Profit Margin (Actual)', ...MONTH_ORDER.map(m => MONTHS[m].totals.margin_actual + '%')],
+    ['Actual Billable Hours (All Silos)', ...MONTH_ORDER.map(m => fmtHrs(MONTHS[m].totals.act_hrs))],
+  ];
+  const companyHeaders = ['Metric', ...MONTH_ORDER];
+  const companyEl = document.getElementById('trendsCompanyTable');
+  if (companyEl) { companyEl.innerHTML = ''; companyEl.appendChild(buildTable(companyHeaders, companyRows)); }
+
+  // Actual revenue by silo, by month
+  const revHeaders = ['Silo', ...MONTH_ORDER];
+  const revRows = SILO_ORDER.map(silo => {
+    const cells = MONTH_ORDER.map(m => {
+      const s = MONTHS[m].silos.find(x => x.name === silo);
+      return s ? fmtMoney(s.act_rev) : 'N/A';
+    });
+    return [silo, ...cells];
+  });
+  const revEl = document.getElementById('trendsRevenueTable');
+  if (revEl) { revEl.innerHTML = ''; revEl.appendChild(buildTable(revHeaders, revRows)); }
+
+  // Actual billable hours by silo, by month
+  const hrsHeaders = ['Silo', ...MONTH_ORDER];
+  const hrsRows = SILO_ORDER.map(silo => {
+    const cells = MONTH_ORDER.map(m => {
+      const s = MONTHS[m].silos.find(x => x.name === silo);
+      return s ? fmtHrs(s.act_hrs) : 'N/A';
+    });
+    return [silo, ...cells];
+  });
+  const hrsEl = document.getElementById('trendsHoursTable');
+  if (hrsEl) { hrsEl.innerHTML = ''; hrsEl.appendChild(buildTable(hrsHeaders, hrsRows)); }
+}
+
+buildMonthTabs();
+renderAll();
+wireTableToggles();
+wireThemeToggle();
+buildTrendsSection();
+</script>
+</body>
+</html>
